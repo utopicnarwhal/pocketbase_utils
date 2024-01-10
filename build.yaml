@@ -1,0 +1,18 @@
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          any_map: false # If true, Map types are not assumed to be Map<String, dynamic> – which is the default type of Map instances return by JSON decode in dart:convert.
+          checked: false # If true, generated fromJson functions include extra checks to validate proper deserialization of types.
+          constructor: "" # Specifies a named constructor to target when creating the fromJson function.
+          create_factory: true # If true (the default), a private, static _$ExampleFromJson method is created in the generated part file.
+          create_field_map: false # If true (defaults to false), a private, static _$ExampleJsonMeta constant is created in the generated part file.
+          create_per_field_to_json: false # If true (defaults to false), a private, static _$ExamplePerFieldToJson abstract class will be generated in the part file.
+          create_to_json: true # If true (the default), A top-level function is created that you can reference from your class.
+          disallow_unrecognized_keys: false # If false (the default), then the generated FromJson function will ignore unrecognized keys in the provided JSON Map.
+          explicit_to_json: true # If true, generated toJson methods will explicitly call toJson on nested objects.
+          field_rename: none # Defines the automatic naming strategy when converting class field names into JSON map keys.
+          generic_argument_factories: false # When true on classes with type parameters (generic types), extra "helper" parameters will be generated for fromJson and/or toJson to support serializing values of those types.
+          ignore_unannotated: false # When true, only fields annotated with JsonKey will have code generated.
+          include_if_null: true # Whether the generator should include fields with null values in the serialized output.
