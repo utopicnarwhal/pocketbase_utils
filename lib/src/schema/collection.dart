@@ -10,8 +10,10 @@ part 'collection.g.dart';
 enum CollectionType {
   /// [Read more](https://pocketbase.io/docs/collections/#auth-collection)
   auth,
+
   /// [Read more](https://pocketbase.io/docs/collections/#base-collection)
   base,
+
   /// [Read more](https://pocketbase.io/docs/collections/#view-collection)
   view,
 }
@@ -72,19 +74,6 @@ final class Collection {
 
     final className = '${name.capFirstChar()}Record';
 
-    final collectionRefMethods = collectionRefMethodBuilderList.map(
-      (mb0) => code_builder.Method(
-        (mb1) {
-          final mb = mb0(mb1)
-            ..lambda = true
-            ..annotations.add(code_builder.refer('override'));
-          if (mb.name != null && mb.name!.length > 1) {
-            mb.body = code_builder.Code(mb.name!.substring(1));
-          }
-        },
-      ),
-    );
-
     final classCode = code_builder.Class(
       (c) => c
         ..name = className
@@ -93,20 +82,18 @@ final class Collection {
         ..annotations.add(code_builder.refer('JsonSerializable()', 'package:json_annotation/json_annotation.dart'))
         ..fields.addAll([
           for (var field in schema) field.toCodeBuilder(),
-          for (var colRefMethod in collectionRefMethods)
+          for (var staticCollectionRefFieldName in ['collectionId', 'collectionName'])
             code_builder.Field(
               (f) => f
-                ..name = colRefMethod.name?.substring(1)
+                ..name = '\$$staticCollectionRefFieldName'
                 ..static = true
                 ..modifier = code_builder.FieldModifier.constant
                 ..assignment = code_builder
-                    .literalString(
-                      switch (colRefMethod.name) {
-                        r'$collectionName' => name,
-                        r'$collectionId' => id,
-                        _ => '',
-                      },
-                    )
+                    .literalString(switch (staticCollectionRefFieldName) {
+                      r'collectionName' => name,
+                      r'collectionId' => id,
+                      _ => '',
+                    })
                     .code,
             ),
         ])
@@ -141,26 +128,58 @@ final class Collection {
               ..requiredParameters.add(
                 code_builder.Parameter(
                   (p) => p
-                    ..type = code_builder.Reference('Map<String, dynamic>')
+                    ..type = code_builder.refer('Map<String, dynamic>')
                     ..name = 'json',
                 ),
               )
               ..body = code_builder.Code('_\$${className}FromJson(json)'),
           ),
+          code_builder.Constructor(
+            (d) => d
+              ..factory = true
+              ..name = 'fromRecordModel'
+              ..requiredParameters.add(
+                code_builder.Parameter(
+                  (p) => p
+                    ..type = code_builder.refer('RecordModel', 'package:pocketbase/pocketbase.dart')
+                    ..name = 'recordModel',
+                ),
+              )
+              ..body = code_builder.Block(
+                (b) => b
+                  ..statements.addAll([
+                    code_builder
+                        .declareFinal('extendedJsonMap')
+                        .assign(code_builder.literalMap({
+                          code_builder.literalSpread(): code_builder.refer('recordModel.data'),
+                          for (var recordFieldName in ['id', 'created', 'updated', 'collectionId', 'collectionName'])
+                            code_builder.refer('${className}FieldsEnum.$recordFieldName.name'):
+                                code_builder.refer('recordModel.$recordFieldName'),
+                        }))
+                        .statement,
+                    code_builder.InvokeExpression.newOf(
+                      code_builder.refer('$className.fromJson'),
+                      [code_builder.refer('extendedJsonMap')],
+                    ).returned.statement,
+                  ]),
+              ),
+          ),
         ])
         ..methods.addAll([
           code_builder.Method((m) => m
-            ..returns = code_builder.Reference('Map<String, dynamic>')
+            ..returns = code_builder.refer('Map<String, dynamic>')
             ..name = 'toJson'
             ..lambda = true
             ..body = code_builder.Code('_\$${className}ToJson(this)')),
-          ...collectionRefMethods,
         ]),
     );
 
     final libraryCode = code_builder.Library(
       (l) => l
-        ..body.addAll([enumCode, classCode])
+        ..body.addAll([
+          enumCode,
+          classCode,
+        ])
         ..generatedByComment = doNotModifyByHandTemplate
         ..directives.add(code_builder.Directive.part('$fileName.g.dart')),
     );

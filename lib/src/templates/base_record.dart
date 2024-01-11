@@ -12,7 +12,6 @@ String baseRecordClassGenerator(int lineLength) {
       ..fields.addAll([
         for (var field in baseFields.where((sf) => !sf.hiddenSystem)) field.toCodeBuilder(),
       ])
-      ..methods.addAll(collectionRefMethodBuilderList.map((e) => code_builder.Method(e)))
       ..constructors.addAll([
         code_builder.Constructor((d) => d
           ..optionalParameters.addAll([

@@ -50,19 +50,17 @@ final class Field {
       FieldType.select => options?.maxSelect == 1 ? 'String' : 'List<String>',
       FieldType.relation => options?.maxSelect == 1 ? 'String' : 'List<String>',
       FieldType.file => options?.maxSelect == 1 ? 'String' : 'List<String>',
-      FieldType.json => 'String',
+      FieldType.json => 'dynamic',
     };
 
-    if (!required) {
+    if (!required && fieldTypeRef != 'dynamic') {
       fieldTypeRef += '?';
     }
 
-    return code_builder.Field(
-      (f) => f
-        ..name = name
-        ..modifier = code_builder.FieldModifier.final$
-        ..type = code_builder.refer(fieldTypeRef),
-    );
+    return code_builder.Field((f) => f
+      ..name = name
+      ..modifier = code_builder.FieldModifier.final$
+      ..type = code_builder.refer(fieldTypeRef));
   }
 }
 
@@ -92,6 +90,16 @@ const baseFields = [
   Field(
     name: 'updated',
     type: FieldType.date,
+    required: true,
+  ),
+  Field(
+    name: 'collectionId',
+    type: FieldType.text,
+    required: true,
+  ),
+  Field(
+    name: 'collectionName',
+    type: FieldType.text,
     required: true,
   ),
 ];
@@ -132,15 +140,4 @@ const authFields = [
     required: true,
     docs: '/// THIS FIELD IS ONLY FOR CREATING AN AUTH TYPE RECORD',
   ),
-];
-
-final collectionRefMethodBuilderList = [
-  (code_builder.MethodBuilder m) => m
-    ..returns = code_builder.refer('String')
-    ..type = code_builder.MethodType.getter
-    ..name = r'$collectionName',
-  (code_builder.MethodBuilder m) => m
-    ..returns = code_builder.refer('String')
-    ..type = code_builder.MethodType.getter
-    ..name = r'$collectionId',
 ];
