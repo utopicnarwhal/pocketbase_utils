@@ -1,6 +1,6 @@
 name: pocketbase_utils
 description: "pocketbase_utils is a dart library that generates Dart models code from a PocketBase collections scheme json file."
-version: 0.0.2
+version: 0.0.3
 repository: https://github.com/utopicnarwhal/pocketbase_utils
 
 environment:
@@ -18,8 +18,8 @@ dependencies:
   yaml: ^3.0.0
 
 dev_dependencies:
-  build_runner: ^2.0.6
+  build_runner: ^2.4.8
   json_serializable: ^6.7.1
   lints: ^3.0.0
   mockito: ^5.4.3
-  test: ^1.16.0
+  test: ^1.25.1
