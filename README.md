@@ -12,14 +12,15 @@ Follow these steps to get started:
 
 ### 1. Download the collections schema
 
-* Open your pocketbase admin panel and go to `Settings/Export collections`.
-* Click on "Download as JSON" button.
-* Save the file into the project (the root is default by the config).
-* `Reminder`: You may also want to add your file into the `.gitignore`.
+- Open your pocketbase admin panel and go to `Settings/Export collections`.
+- Click on "Download as JSON" button.
+- Save the file into the project (the root is default by the config).
+- `Reminder`: You may also want to add your file into the `.gitignore`.
 
 ### 2. Install the package
 
 Add the package into your `pubspec.yaml`:
+
 ```yaml
 ...
 dev_dependencies:
@@ -27,30 +28,37 @@ dev_dependencies:
     pocketbase_utils: x.x.x
 ```
 
-You also have to install the [json_serializable package](https://pub.dev/packages/json_serializable).
+You also may have to install the [json_serializable](https://pub.dev/packages/json_serializable), [equatable](https://pub.dev/packages/equatable), [collection](https://pub.dev/packages/collection), and [pocketbase](https://pub.dev/packages/pocketbase) packages.
 
 ### 3. Configure package
 
 Add package configuration to your `pubspec.yaml` file. Here is a full configuration for the package:
 
 ```yaml
-...
+
+---
 pocketbase_utils:
-    enabled: true # Required. Must be set to true to activate the package. Default: false
-    pb_schema_path: pb_schema.json # Optional. Sets the path of your collection schema file. Default: pb_schema.json
-    output_dir: lib/generated/pocketbase # Optional. Sets the directory of generated model files. If the directory doesn't exist — it'll be created. Default: lib/generated/pocketbase
-    line_length: 80 # Optional. Sets the length of line for dart formatter of generated code. Default: 80
+  enabled: true # Required. Must be set to true to activate the package. Default: false
+  pb_schema_path: pb_schema.json # Optional. Sets the path of your collection schema file. Default: pb_schema.json
+  output_dir: lib/generated/pocketbase # Optional. Sets the directory of generated model files. If the directory doesn't exist — it'll be created. Default: lib/generated/pocketbase
+  line_length: 80 # Optional. Sets the length of line for dart formatter of generated code. Default: 80
 ```
 
 ### 4. Run the generator
 
 In the root of your flutter project run:
+
 ```sh
 flutter pub run pocketbase_utils:generate
 ```
 
 This will produce files inside `lib/generated/pocketbase` directory.
 You can also change the output folder to a custom directory by adding the `output_dir` line in your `pubspec.yaml` file.
+
+And then to build the `toJson` and `fromJson` run:
+```sh
+dart run build_runner build --delete-conflicting-outputs
+```
 
 ## Contributing
 

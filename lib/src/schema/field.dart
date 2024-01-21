@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:code_builder/code_builder.dart' as code_builder;
+import 'package:pocketbase_utils/src/utils/string_utils.dart';
 
 part 'field.g.dart';
 
@@ -41,26 +42,32 @@ final class Field {
 
   Map<String, dynamic> toJson() => _$FieldToJson(this);
 
-  code_builder.Field toCodeBuilder() {
+  String enumTypeName(String className) => '$className${name.capFirstChar()}Enum';
+
+  code_builder.Reference fieldTypeRef(String className, {forceNullable = false}) {
     var fieldTypeRef = switch (type) {
       FieldType.text || FieldType.editor || FieldType.email || FieldType.url => 'String',
       FieldType.number => 'int',
       FieldType.bool => 'bool',
       FieldType.date => 'DateTime',
-      FieldType.select => options?.maxSelect == 1 ? 'String' : 'List<String>',
+      FieldType.select => options?.maxSelect == 1 ? enumTypeName(className) : 'List<${enumTypeName(className)}>',
       FieldType.relation => options?.maxSelect == 1 ? 'String' : 'List<String>',
       FieldType.file => options?.maxSelect == 1 ? 'String' : 'List<String>',
       FieldType.json => 'dynamic',
     };
 
-    if (!required && fieldTypeRef != 'dynamic') {
+    if ((!required || forceNullable) && fieldTypeRef != 'dynamic') {
       fieldTypeRef += '?';
     }
 
+    return code_builder.refer(fieldTypeRef);
+  }
+
+  code_builder.Field toCodeBuilder(String className) {
     return code_builder.Field((f) => f
       ..name = name
       ..modifier = code_builder.FieldModifier.final$
-      ..type = code_builder.refer(fieldTypeRef));
+      ..type = fieldTypeRef(className));
   }
 }
 

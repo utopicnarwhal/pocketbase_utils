@@ -1,4 +1,4 @@
-const doNotModifyByHandTemplate = """GENERATED CODE - DO NOT MODIFY BY HAND
+const doNotModifyByHandTemplate = r"""GENERATED CODE - DO NOT MODIFY BY HAND
 // *****************************************************
 // POCKETBASE_UTILS
 // *****************************************************

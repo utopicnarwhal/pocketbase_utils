@@ -1,3 +1,12 @@
+## 0.0.3
+
+* `AuthRecord` extends from `BaseRecord`
+* The `BaseRecord` extends [`Equatable`](https://pub.dev/packages/equatable)
+* Added `_takeDiff` method to the generated record class to get a Map of differences
+* Added `_forCreateRequestMethod` method to the generated record class to get a Map of values for the "Create" request
+* Added `EmptyDateTime` to be able to diff it with null in `_takeDiff`
+* Generate options of the `select` type of the field
+
 ## 0.0.2
 
 * Add `fromRecordModel` factory to the generated class

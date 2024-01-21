@@ -14,6 +14,8 @@ Field _$FieldFromJson(Map<String, dynamic> json) => Field(
       options: json['options'] == null
           ? null
           : FieldOptions.fromJson(json['options'] as Map<String, dynamic>),
+      hiddenSystem: json['hiddenSystem'] as bool? ?? false,
+      docs: json['docs'] as String?,
     );
 
 Map<String, dynamic> _$FieldToJson(Field instance) => <String, dynamic>{
@@ -22,6 +24,8 @@ Map<String, dynamic> _$FieldToJson(Field instance) => <String, dynamic>{
       'type': _$FieldTypeEnumMap[instance.type]!,
       'required': instance.required,
       'options': instance.options?.toJson(),
+      'hiddenSystem': instance.hiddenSystem,
+      'docs': instance.docs,
     };
 
 const _$FieldTypeEnumMap = {

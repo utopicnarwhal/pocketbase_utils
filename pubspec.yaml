@@ -10,6 +10,7 @@ dependencies:
   analyzer: ^6.0.0
   args: ^2.0.0
   code_builder: ^4.9.0
+  collection: ^1.18.0
   dart_style: ^2.3.4
   json_annotation: ^4.8.1
   path: ^1.8.0

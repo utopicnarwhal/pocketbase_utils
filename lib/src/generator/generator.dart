@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'package:pocketbase_utils/src/schema/collection.dart';
+import 'package:pocketbase_utils/src/schema/collection/collection.dart';
 import 'package:pocketbase_utils/src/templates/auth_record.dart';
 import 'package:pocketbase_utils/src/templates/base_record.dart';
+import 'package:pocketbase_utils/src/templates/empty_values.dart';
 import 'package:pocketbase_utils/src/utils/string_utils.dart';
 
 import '../config/pubspec_config.dart';
@@ -84,6 +85,10 @@ class Generator {
     createFileAndWrite(
       path.join(outputDirectory.path, 'auth_record.dart'),
       authRecordClassGenerator(_lineLength),
+    );
+    createFileAndWrite(
+      path.join(outputDirectory.path, 'empty_values.dart'),
+      emptyValuesGenerator(_lineLength),
     );
 
     for (var collection in collections) {
