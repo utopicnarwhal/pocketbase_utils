@@ -14,3 +14,17 @@ Block ifStatement(
     if (addCurlyBraces) Code('}'),
   ]);
 }
+
+Block forLoop(
+  Expression defineLoopCode,
+  Code body, {
+  bool addCurlyBraces = true,
+}) {
+  return Block.of([
+    Code('for '),
+    defineLoopCode.parenthesized.code,
+    if (addCurlyBraces) Code('{'),
+    body,
+    if (addCurlyBraces) Code('}'),
+  ]);
+}

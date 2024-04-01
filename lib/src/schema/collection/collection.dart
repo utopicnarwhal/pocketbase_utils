@@ -5,11 +5,13 @@ import 'package:pocketbase_utils/src/schema/field.dart';
 import 'package:pocketbase_utils/src/templates/do_not_modify_by_hand.dart';
 import 'package:pocketbase_utils/src/utils/code_builder.dart';
 import 'package:pocketbase_utils/src/utils/string_utils.dart';
+import 'package:recase/recase.dart';
 
 part 'collection.g.dart';
 part 'constructors/default.dart';
 part 'constructors/from_json.dart';
 part 'constructors/from_record_model.dart';
+part 'methods/copy_with.dart';
 part 'methods/for_create_request.dart';
 part 'methods/props.dart';
 part 'methods/take_diff.dart';
@@ -84,7 +86,10 @@ final class Collection {
             ..name = field.enumTypeName(className)
             ..values.addAll([
               if (field.options?.values != null)
-                for (final value in field.options!.values!) code_builder.EnumValue((ev) => ev.name = value),
+                for (final value in field.options!.values!)
+                  code_builder.EnumValue((ev) => ev
+                    ..name = ReCase(value).camelCase
+                    ..annotations.add(code_builder.refer("JsonValue('$value')"))),
             ]),
         ),
     ];
@@ -119,6 +124,7 @@ final class Collection {
         ])
         ..methods.addAll([
           _toJsonMethod(className),
+          _copyWithMethod(className, allFieldsExceptHidden),
           _takeDiffMethod(className, allFieldsExceptHidden),
           _propsMethod(schema),
           _forCreateRequestMethod(className, allFieldsExceptHidden),

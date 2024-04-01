@@ -49,7 +49,7 @@ pocketbase_utils:
 In the root of your flutter project run:
 
 ```sh
-flutter pub run pocketbase_utils:generate
+dart run pocketbase_utils:generate
 ```
 
 This will produce files inside `lib/generated/pocketbase` directory.
@@ -58,6 +58,12 @@ You can also change the output folder to a custom directory by adding the `outpu
 And then to build the `toJson` and `fromJson` run:
 ```sh
 dart run build_runner build --delete-conflicting-outputs
+```
+
+### 5. Publishing
+
+```sh
+dart pub publish --dry-run
 ```
 
 ## Contributing

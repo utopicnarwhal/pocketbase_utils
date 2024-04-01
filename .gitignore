@@ -28,3 +28,4 @@
 .dart_tool/
 build/
 .fvm/
+.fvmrc

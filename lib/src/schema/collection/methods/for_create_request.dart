@@ -17,7 +17,8 @@ code_builder.Method _forCreateRequestMethod(String className, Iterable<Field> al
       code_builder.Code addFieldToResultWithCheckCode(Field field) {
         final addFieldCode = code_builder.refer('result').property('addAll').call([
           code_builder.literalMap({
-            code_builder.refer('${className}FieldsEnum.${field.name}.name'): code_builder.refer(field.name),
+            code_builder.refer('${className}FieldsEnum.${field.name}.name'):
+                code_builder.refer('jsonMap').index(code_builder.refer('${className}FieldsEnum.${field.name}.name')),
           })
         ]).statement;
 
@@ -32,6 +33,23 @@ code_builder.Method _forCreateRequestMethod(String className, Iterable<Field> al
       }
 
       bb.statements.addAll([
+        code_builder
+            .declareFinal('jsonMap')
+            .assign(
+              code_builder.refer(className).newInstance([], {
+                for (final baseField in baseFields)
+                  baseField.name: switch (baseField.name) {
+                    'id' => code_builder.literalString(''),
+                    'created' || 'updated' => code_builder.refer('EmptyDateTime', 'empty_values.dart').newInstance([]),
+                    'collectionId' || 'collectionName' => code_builder.refer('\$${baseField.name}'),
+                    _ => code_builder.refer(baseField.name),
+                  },
+                for (final field in allFieldsExceptHidden.where((f) => !baseFields.contains(f)))
+                  field.name: code_builder.refer(field.name),
+              }),
+            )
+            .property('toJson')
+            .call([]).statement,
         code_builder
             .declareFinal('result', type: code_builder.refer('Map<String, dynamic>'))
             .assign(code_builder.literalMap({}))

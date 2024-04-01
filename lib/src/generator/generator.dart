@@ -6,7 +6,7 @@ import 'package:pocketbase_utils/src/schema/collection/collection.dart';
 import 'package:pocketbase_utils/src/templates/auth_record.dart';
 import 'package:pocketbase_utils/src/templates/base_record.dart';
 import 'package:pocketbase_utils/src/templates/empty_values.dart';
-import 'package:pocketbase_utils/src/utils/string_utils.dart';
+import 'package:recase/recase.dart';
 
 import '../config/pubspec_config.dart';
 import '../utils/file_utils.dart';
@@ -92,7 +92,7 @@ class Generator {
     );
 
     for (var collection in collections) {
-      final fileName = '${collection.name.toSnakeCase()}_record';
+      final fileName = '${ReCase(collection.name).snakeCase}_record';
 
       createFileAndWrite(
         path.join(outputDirectory.path, '$fileName.dart'),

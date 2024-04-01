@@ -1,3 +1,12 @@
+## 0.0.5
+
+* `copyWith` method is added to the gererated Records
+* Take the values from `toJSON` when running `takeDiff` or `forCreateRequest` of a Record
+
+## 0.0.4
+
+* Fix select field enums when an option isn't complient to variable name
+
 ## 0.0.3
 
 * `AuthRecord` extends from `BaseRecord`
