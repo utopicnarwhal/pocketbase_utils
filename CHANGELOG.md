@@ -1,4 +1,9 @@
-## 0.0.5
+## 0.0.6
+
+* Determine if a field has an `int` or `double` type
+* min/max values are added to the class definition as `static` `const` values.
+
+* ## 0.0.5
 
 * `copyWith` method is added to the gererated Records
 * Take the values from `toJSON` when running `takeDiff` or `forCreateRequest` of a Record

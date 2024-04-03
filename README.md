@@ -60,15 +60,24 @@ And then to build the `toJson` and `fromJson` run:
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-### 5. Publishing
+
+## Contributing
+
+Contributions are welcome! Please create an issue or make a fork and propose a PR to contribute to this project.
+
+## Commands
+
+### Publish package
 
 ```sh
 dart pub publish --dry-run
 ```
 
-## Contributing
+### Generate code inside the package
 
-Contributions are welcome! Please create an issue or make a fork and propose a PR to contribute to this project.
+```sh
+dart run build_runner build --delete-conflicting-outputs
+```
 
 ## License
 

@@ -43,6 +43,9 @@ const _$FieldTypeEnumMap = {
 };
 
 FieldOptions _$FieldOptionsFromJson(Map<String, dynamic> json) => FieldOptions(
+      min: jsonValueParseToInt(json['min']),
+      max: jsonValueParseToInt(json['max']),
+      noDecimal: json['noDecimal'] as bool?,
       maxSelect: json['maxSelect'] as int?,
       values:
           (json['values'] as List<dynamic>?)?.map((e) => e as String).toList(),
@@ -51,5 +54,8 @@ FieldOptions _$FieldOptionsFromJson(Map<String, dynamic> json) => FieldOptions(
 Map<String, dynamic> _$FieldOptionsToJson(FieldOptions instance) =>
     <String, dynamic>{
       'maxSelect': instance.maxSelect,
+      'min': instance.min,
+      'max': instance.max,
+      'noDecimal': instance.noDecimal,
       'values': instance.values,
     };

@@ -101,7 +101,10 @@ final class Collection {
         ..modifier = code_builder.ClassModifier.final$
         ..annotations.add(code_builder.refer('JsonSerializable()'))
         ..fields.addAll([
-          for (var field in schema) field.toCodeBuilder(className),
+          for (var field in schema) ...[
+            field.toCodeBuilder(className),
+            ...field.additionalFieldOptionsAsFields(),
+          ],
           for (var staticCollectionRefFieldName in ['collectionId', 'collectionName'])
             code_builder.Field(
               (f) => f

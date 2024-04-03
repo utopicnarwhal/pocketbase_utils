@@ -10,7 +10,7 @@ Future<void> main(List<String> args) async {
     await generator.generateAsync();
   } on GeneratorException catch (e) {
     exitWithError(e.message);
-  } catch (e) {
-    exitWithError('Failed to generate collections models files.\n$e');
+  } catch (e, stackTrace) {
+    exitWithError('Failed to generate collections models files.\n$e\n StackTrace: $stackTrace');
   }
 }

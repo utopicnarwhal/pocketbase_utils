@@ -12,3 +12,19 @@ void exitWithError(String message) {
   error(message);
   io.exit(2);
 }
+
+int? jsonValueParseToInt(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is int) {
+    return value;
+  }
+  if (value is String) {
+    if (value.isEmpty) {
+      return null;
+    }
+    return int.parse(value);
+  }
+  throw Exception('The type of value `$value` isn\'t `String` or `int`');
+}
