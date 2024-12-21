@@ -1,4 +1,4 @@
-library pocketbase_utils;
+library;
 
 import 'package:pocketbase_utils/pocketbase_utils.dart';
 import 'package:pocketbase_utils/src/generator/generator_exception.dart';

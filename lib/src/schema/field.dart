@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:code_builder/code_builder.dart' as code_builder;
+import 'package:pocketbase_utils/src/templates/date_time_json_methods.dart';
 import 'package:pocketbase_utils/src/utils/string_utils.dart';
 import 'package:pocketbase_utils/src/utils/utils.dart';
 
@@ -64,11 +65,37 @@ final class Field {
     return code_builder.refer(fieldTypeRef);
   }
 
+  code_builder.Expression? fieldAnnotation(String className) {
+    var result = switch (type) {
+      FieldType.date => code_builder.refer('JsonKey', 'package:json_annotation/json_annotation.dart').newInstance(
+          [],
+          {
+            'toJson': required
+                ? code_builder.refer(pocketBaseDateTimeToJsonMethodName)
+                : code_builder.refer(pocketBaseNullableDateTimeToJsonMethodName),
+            'fromJson': required
+                ? code_builder.refer(pocketBaseDateTimeFromJsonMethodName)
+                : code_builder.refer(pocketBaseNullableDateTimeFromJsonMethodName),
+          },
+        ),
+      _ => null,
+    };
+
+    return result;
+  }
+
   code_builder.Field toCodeBuilder(String className) {
-    return code_builder.Field((f) => f
-      ..name = name
-      ..modifier = code_builder.FieldModifier.final$
-      ..type = fieldTypeRef(className));
+    return code_builder.Field((f) {
+      final annotation = fieldAnnotation(className);
+
+      f
+        ..name = name
+        ..modifier = code_builder.FieldModifier.final$
+        ..type = fieldTypeRef(className)
+        ..annotations.addAll([
+          if (annotation != null) annotation,
+        ]);
+    });
   }
 
   List<code_builder.Field> additionalFieldOptionsAsFields() {

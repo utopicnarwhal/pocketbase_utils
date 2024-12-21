@@ -89,7 +89,11 @@ final class Collection {
                 for (final value in field.options!.values!)
                   code_builder.EnumValue((ev) => ev
                     ..name = ReCase(value).camelCase
-                    ..annotations.add(code_builder.refer("JsonValue('$value')"))),
+                    ..annotations.add(
+                      code_builder
+                          .refer('JsonValue', 'package:json_annotation/json_annotation.dart')
+                          .newInstance([code_builder.literalString(value)]),
+                    )),
             ]),
         ),
     ];
@@ -99,7 +103,8 @@ final class Collection {
         ..name = className
         ..extend = extend
         ..modifier = code_builder.ClassModifier.final$
-        ..annotations.add(code_builder.refer('JsonSerializable()'))
+        ..annotations
+            .add(code_builder.refer('JsonSerializable', 'package:json_annotation/json_annotation.dart').newInstance([]))
         ..fields.addAll([
           for (var field in schema) ...[
             field.toCodeBuilder(className),
@@ -142,8 +147,10 @@ final class Collection {
           classCode,
         ])
         ..generatedByComment = doNotModifyByHandTemplate
+        ..ignoreForFile.add('unused_import')
         ..directives.addAll([
           code_builder.Directive.part('$fileName.g.dart'),
+          code_builder.Directive.import('date_time_json_methods.dart'),
           code_builder.Directive.import('package:json_annotation/json_annotation.dart'),
         ]),
     );

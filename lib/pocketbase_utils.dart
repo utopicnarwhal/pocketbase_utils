@@ -1,3 +1,3 @@
-library pocketbase_utils;
+library;
 
 export 'src/generator/generator.dart';

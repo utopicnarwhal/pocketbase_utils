@@ -1,9 +1,16 @@
+# Changelog
+
+## 0.0.7
+
+* Added custom json convertion methods for the `date` type of field which allows to handle a case when the pocketbase backend returns an empty string when the `DateTime` value is empty.
+* Upgrade dependencies
+
 ## 0.0.6
 
 * Determine if a field has an `int` or `double` type
 * min/max values are added to the class definition as `static` `const` values.
 
-* ## 0.0.5
+## 0.0.5
 
 * `copyWith` method is added to the gererated Records
 * Take the values from `toJSON` when running `takeDiff` or `forCreateRequest` of a Record

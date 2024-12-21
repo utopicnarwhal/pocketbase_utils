@@ -44,6 +44,11 @@ String baseRecordClassGenerator(int lineLength) {
   final libraryCode = code_builder.Library(
     (l) => l
       ..body.add(classCode)
+      ..ignoreForFile.add('unused_import')
+      ..directives.addAll([
+        code_builder.Directive.import('date_time_json_methods.dart'),
+        code_builder.Directive.import('package:json_annotation/json_annotation.dart'),
+      ])
       ..generatedByComment = doNotModifyByHandTemplate,
   );
 
