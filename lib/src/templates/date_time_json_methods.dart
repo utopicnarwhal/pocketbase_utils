@@ -24,7 +24,10 @@ String dateTimeJsonMethodsGenerator(int lineLength) {
     orderDirectives: true,
   );
 
-  return DartFormatter(pageWidth: lineLength).format('${libraryCode.accept(emitter)}');
+  return DartFormatter(
+    languageVersion: DartFormatter.latestShortStyleLanguageVersion,
+    pageWidth: lineLength,
+  ).format('${libraryCode.accept(emitter)}');
 }
 
 code_builder.Method _dateTimeToJsonMethod() {

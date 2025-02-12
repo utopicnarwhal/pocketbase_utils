@@ -10,7 +10,8 @@ Collection _$CollectionFromJson(Map<String, dynamic> json) => Collection(
       id: json['id'] as String,
       name: json['name'] as String,
       type: $enumDecode(_$CollectionTypeEnumMap, json['type']),
-      schema: (json['schema'] as List<dynamic>)
+      system: json['system'] as bool,
+      fields: (json['fields'] as List<dynamic>)
           .map((e) => Field.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
@@ -20,7 +21,8 @@ Map<String, dynamic> _$CollectionToJson(Collection instance) =>
       'id': instance.id,
       'name': instance.name,
       'type': _$CollectionTypeEnumMap[instance.type]!,
-      'schema': instance.schema.map((e) => e.toJson()).toList(),
+      'system': instance.system,
+      'fields': instance.fields.map((e) => e.toJson()).toList(),
     };
 
 const _$CollectionTypeEnumMap = {

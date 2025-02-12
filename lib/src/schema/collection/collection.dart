@@ -1,10 +1,10 @@
 import 'package:code_builder/code_builder.dart' as code_builder;
+import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pocketbase_utils/src/schema/field.dart';
 import 'package:pocketbase_utils/src/templates/do_not_modify_by_hand.dart';
 import 'package:pocketbase_utils/src/utils/code_builder.dart';
-import 'package:pocketbase_utils/src/utils/string_utils.dart';
 import 'package:recase/recase.dart';
 
 part 'collection.g.dart';
@@ -34,13 +34,15 @@ final class Collection {
     required this.id,
     required this.name,
     required this.type,
-    required this.schema,
+    required this.system,
+    required this.fields,
   });
 
   final String id;
   final String name;
   final CollectionType type;
-  final List<Field> schema;
+  final bool system;
+  final List<Field> fields;
 
   factory Collection.fromJson(Map<String, dynamic> json) => _$CollectionFromJson(json);
 
@@ -48,45 +50,57 @@ final class Collection {
 
   String generateClassCode(String fileName, int lineLength) {
     final code_builder.Reference? extend;
-    final List<Field>? superFields;
+    final superFields = <Field>[];
+    final fieldsWithoutSuperFieldsAndHidden = fields.whereNot((f) => f.hidden).toList();
 
     switch (type) {
       case CollectionType.base:
         extend = code_builder.refer('BaseRecord', 'base_record.dart');
-        superFields = baseFields;
+        superFields.addAll(baseFields);
       case CollectionType.auth:
         extend = code_builder.refer('AuthRecord', 'auth_record.dart');
-        superFields = authFields;
+        superFields.addAll(authFields);
       case CollectionType.view:
         return '';
     }
-    schema.sort((a, b) => a.required == b.required ? 0 : (a.required ? -1 : 1));
-    final allFields = [...superFields, ...schema];
-    final allFieldsExceptHidden = allFields.where((f) => !f.hiddenSystem);
 
-    final className = '${name.capFirstChar()}Record';
+    final superFieldsWithoutHidden = superFields.whereNot((f) => f.hidden).toList();
+
+    fieldsWithoutSuperFieldsAndHidden.sort((a, b) => a.required == b.required ? 0 : (a.required == true ? -1 : 1));
+    fieldsWithoutSuperFieldsAndHidden.removeWhere((f) => superFieldsWithoutHidden.any((sf) => sf.name == f.name));
+
+    final allFieldsWithoutHidden = [...superFieldsWithoutHidden, ...fieldsWithoutSuperFieldsAndHidden].toList();
+
+    final className = '${ReCase(name).pascalCase}Record';
 
     final enumFieldsCode = code_builder.Enum(
       (e) => e
         ..name = '${className}FieldsEnum'
         ..values.addAll([
-          for (var field in allFields)
+          for (var field in allFieldsWithoutHidden)
             code_builder.EnumValue(
               (ev) => ev
                 ..name = field.name
+                ..docs.addAll([if (field.docs != null) field.docs!]),
+            ),
+          for (var field in [...fields, ...superFields].where((f) => f.hidden))
+            code_builder.EnumValue(
+              (ev) => ev
+                ..name = 'hidden\$${field.name}'
                 ..docs.addAll([if (field.docs != null) field.docs!]),
             ),
         ]),
     );
 
     final enumSelectValuesCode = [
-      for (final field in schema.where((f) => f.type == FieldType.select && f.options?.values?.isNotEmpty == true))
+      for (final field
+          in allFieldsWithoutHidden.where((f) => f.type == FieldType.select && f.values?.isNotEmpty == true))
         code_builder.Enum(
           (e) => e
             ..name = field.enumTypeName(className)
             ..values.addAll([
-              if (field.options?.values != null)
-                for (final value in field.options!.values!)
+              if (field.values != null)
+                for (final value in field.values!)
                   code_builder.EnumValue((ev) => ev
                     ..name = ReCase(value).camelCase
                     ..annotations.add(
@@ -106,7 +120,7 @@ final class Collection {
         ..annotations
             .add(code_builder.refer('JsonSerializable', 'package:json_annotation/json_annotation.dart').newInstance([]))
         ..fields.addAll([
-          for (var field in schema) ...[
+          for (var field in fieldsWithoutSuperFieldsAndHidden) ...[
             field.toCodeBuilder(className),
             ...field.additionalFieldOptionsAsFields(),
           ],
@@ -126,16 +140,16 @@ final class Collection {
             ),
         ])
         ..constructors.addAll([
-          _defaultConstructor(superFields, schema),
+          _defaultConstructor(superFieldsWithoutHidden, fieldsWithoutSuperFieldsAndHidden),
           _fromJsonConstructor(className),
           _fromRecordModelConstructor(className),
         ])
         ..methods.addAll([
           _toJsonMethod(className),
-          _copyWithMethod(className, allFieldsExceptHidden),
-          _takeDiffMethod(className, allFieldsExceptHidden),
-          _propsMethod(schema),
-          _forCreateRequestMethod(className, allFieldsExceptHidden),
+          _copyWithMethod(className, allFieldsWithoutHidden),
+          _takeDiffMethod(className, allFieldsWithoutHidden),
+          _propsMethod(fieldsWithoutSuperFieldsAndHidden),
+          _forCreateRequestMethod(className, allFieldsWithoutHidden),
         ]),
     );
 
@@ -160,6 +174,9 @@ final class Collection {
       orderDirectives: true,
     );
 
-    return DartFormatter(pageWidth: lineLength).format('${libraryCode.accept(emitter)}');
+    return DartFormatter(
+      languageVersion: DartFormatter.latestShortStyleLanguageVersion,
+      pageWidth: lineLength,
+    ).format('${libraryCode.accept(emitter)}');
   }
 }

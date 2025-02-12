@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0
+
+* Migrate the codebase to support only collection schema file from PocketBase version > 0.23.0
+* Upgrade dependencies
+
 ## 0.0.7
 
 * Added custom json convertion methods for the `date` type of field which allows to handle a case when the pocketbase backend returns an empty string when the `DateTime` value is empty.

@@ -8,6 +8,7 @@ class PubspecConfig {
   String? _pbSchemaPath;
   String? _outputDir;
   int? _lineLength;
+  bool? _generateSystemCollections;
 
   bool? get enabled => _enabled;
 
@@ -16,6 +17,8 @@ class PubspecConfig {
   String? get outputDir => _outputDir;
 
   int? get lineLength => _lineLength;
+
+  bool? get generateSystemCollections => _generateSystemCollections;
 
   PubspecConfig() {
     var pubspecFile = getPubspecFile();
@@ -41,5 +44,8 @@ class PubspecConfig {
     _pbSchemaPath = pocketbaseUtilsConfig['pb_schema_path'] is String ? pocketbaseUtilsConfig['pb_schema_path'] : null;
     _outputDir = pocketbaseUtilsConfig['output_dir'] is String ? pocketbaseUtilsConfig['output_dir'] : null;
     _lineLength = pocketbaseUtilsConfig['line_length'] is int ? pocketbaseUtilsConfig['line_length'] : null;
+    _generateSystemCollections = pocketbaseUtilsConfig['generate_system_collections'] is bool
+        ? pocketbaseUtilsConfig['generate_system_collections']
+        : null;
   }
 }

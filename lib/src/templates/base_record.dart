@@ -13,18 +13,18 @@ String baseRecordClassGenerator(int lineLength) {
       ..modifier = code_builder.ClassModifier.base
       ..extend = code_builder.refer('Equatable', 'package:equatable/equatable.dart')
       ..fields.addAll([
-        for (var field in baseFields.where((sf) => !sf.hiddenSystem)) field.toCodeBuilder(className),
+        for (var field in baseFields) field.toCodeBuilder(className),
       ])
       ..constructors.addAll([
         code_builder.Constructor((d) => d
           ..optionalParameters.addAll([
-            for (var field in baseFields.where((sf) => !sf.hiddenSystem))
+            for (var field in baseFields)
               code_builder.Parameter(
                 (p) => p
                   ..toThis = true
                   ..name = field.name
                   ..named = true
-                  ..required = field.required,
+                  ..required = field.required == true,
               ),
           ])),
       ])
@@ -36,7 +36,7 @@ String baseRecordClassGenerator(int lineLength) {
           ..name = 'props'
           ..lambda = true
           ..body = code_builder.literalList([
-            for (var field in baseFields.where((sf) => !sf.hiddenSystem)) code_builder.refer(field.name),
+            for (var field in baseFields) code_builder.refer(field.name),
           ]).code),
       ]),
   );
@@ -57,5 +57,8 @@ String baseRecordClassGenerator(int lineLength) {
     orderDirectives: true,
   );
 
-  return DartFormatter(pageWidth: lineLength).format('${libraryCode.accept(emitter)}');
+  return DartFormatter(
+    languageVersion: DartFormatter.latestShortStyleLanguageVersion,
+    pageWidth: lineLength,
+  ).format('${libraryCode.accept(emitter)}');
 }

@@ -14,10 +14,12 @@ enum FieldType {
   email,
   url,
   date,
+  autodate,
   select,
   relation,
   file,
   json,
+  password,
 }
 
 @JsonSerializable()
@@ -25,40 +27,55 @@ final class Field {
   const Field({
     required this.name,
     required this.type,
-    required this.required,
+    this.maxSelect,
+    this.min,
+    this.max,
+    this.onlyInt,
+    this.required,
     this.id,
-    this.options,
-    this.hiddenSystem = false,
+    this.values,
+    this.hidden = false,
+    this.system = false,
     this.docs,
   });
 
   final String? id;
   final String name;
   final FieldType type;
-  final bool required;
-  final FieldOptions? options;
-  final bool hiddenSystem;
+  final bool? required;
+  final int? maxSelect;
+  @JsonKey(fromJson: jsonValueParseToInt)
+  final int? min;
+  @JsonKey(fromJson: jsonValueParseToInt)
+  final int? max;
+  final bool? onlyInt;
+  final List<String>? values;
+  final bool hidden;
+  final bool system;
   final String? docs;
 
   factory Field.fromJson(Map<String, dynamic> json) => _$FieldFromJson(json);
 
   Map<String, dynamic> toJson() => _$FieldToJson(this);
 
+  bool get hiddenOrSystem => hidden || system;
+
   String enumTypeName(String className) => '$className${name.capFirstChar()}Enum';
 
   code_builder.Reference fieldTypeRef(String className, {forceNullable = false}) {
     var fieldTypeRef = switch (type) {
-      FieldType.text || FieldType.editor || FieldType.email || FieldType.url => 'String',
-      FieldType.number => options?.noDecimal == true ? 'int' : 'double',
+      FieldType.text || FieldType.editor || FieldType.email || FieldType.url || FieldType.password => 'String',
+      FieldType.number => onlyInt == true ? 'int' : 'double',
       FieldType.bool => 'bool',
       FieldType.date => 'DateTime',
-      FieldType.select => options?.maxSelect == 1 ? enumTypeName(className) : 'List<${enumTypeName(className)}>',
-      FieldType.relation => options?.maxSelect == 1 ? 'String' : 'List<String>',
-      FieldType.file => options?.maxSelect == 1 ? 'String' : 'List<String>',
+      FieldType.autodate => 'DateTime',
+      FieldType.select => maxSelect == 1 ? enumTypeName(className) : 'List<${enumTypeName(className)}>',
+      FieldType.relation => maxSelect == 1 ? 'String' : 'List<String>',
+      FieldType.file => maxSelect == 1 ? 'String' : 'List<String>',
       FieldType.json => 'dynamic',
     };
 
-    if ((!required || forceNullable) && fieldTypeRef != 'dynamic') {
+    if ((required != true || forceNullable) && fieldTypeRef != 'dynamic') {
       fieldTypeRef += '?';
     }
 
@@ -70,10 +87,10 @@ final class Field {
       FieldType.date => code_builder.refer('JsonKey', 'package:json_annotation/json_annotation.dart').newInstance(
           [],
           {
-            'toJson': required
+            'toJson': required == true
                 ? code_builder.refer(pocketBaseDateTimeToJsonMethodName)
                 : code_builder.refer(pocketBaseNullableDateTimeToJsonMethodName),
-            'fromJson': required
+            'fromJson': required == true
                 ? code_builder.refer(pocketBaseDateTimeFromJsonMethodName)
                 : code_builder.refer(pocketBaseNullableDateTimeFromJsonMethodName),
           },
@@ -100,43 +117,20 @@ final class Field {
 
   List<code_builder.Field> additionalFieldOptionsAsFields() {
     return [
-      if (options?.min != null)
+      if (min != null)
         code_builder.Field((f) => f
           ..static = true
           ..modifier = code_builder.FieldModifier.constant
           ..name = '${name}MinValue'
-          ..assignment = code_builder.Code(options!.min.toString())),
-      if (options?.max != null)
+          ..assignment = code_builder.Code(min.toString())),
+      if (max != null)
         code_builder.Field((f) => f
           ..static = true
           ..modifier = code_builder.FieldModifier.constant
           ..name = '${name}MaxValue'
-          ..assignment = code_builder.Code(options!.max.toString()))
+          ..assignment = code_builder.Code(max.toString()))
     ];
   }
-}
-
-@JsonSerializable()
-class FieldOptions {
-  const FieldOptions({
-    required this.min,
-    required this.max,
-    required this.noDecimal,
-    required this.maxSelect,
-    required this.values,
-  });
-
-  final int? maxSelect;
-  @JsonKey(fromJson: jsonValueParseToInt)
-  final int? min;
-  @JsonKey(fromJson: jsonValueParseToInt)
-  final int? max;
-  final bool? noDecimal;
-  final List<String>? values;
-
-  factory FieldOptions.fromJson(Map<String, dynamic> json) => _$FieldOptionsFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FieldOptionsToJson(this);
 }
 
 const baseFields = [
@@ -144,26 +138,19 @@ const baseFields = [
     name: 'id',
     type: FieldType.text,
     required: true,
-  ),
-  Field(
-    name: 'created',
-    type: FieldType.date,
-    required: true,
-  ),
-  Field(
-    name: 'updated',
-    type: FieldType.date,
-    required: true,
+    system: true,
   ),
   Field(
     name: 'collectionId',
     type: FieldType.text,
     required: true,
+    system: true,
   ),
   Field(
     name: 'collectionName',
     type: FieldType.text,
     required: true,
+    system: true,
   ),
 ];
 
@@ -190,17 +177,9 @@ const authFields = [
     required: true,
   ),
   Field(
-    name: 'password',
-    type: FieldType.text,
-    hiddenSystem: true,
-    required: false,
-    docs: '/// THIS FIELD IS ONLY FOR CREATING AN AUTH TYPE RECORD',
-  ),
-  Field(
     name: 'passwordConfirm',
     type: FieldType.text,
-    hiddenSystem: true,
-    required: true,
-    docs: '/// THIS FIELD IS ONLY FOR CREATING AN AUTH TYPE RECORD',
-  ),
+    hidden: true,
+    required: false,
+  )
 ];

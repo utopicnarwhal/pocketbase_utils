@@ -10,7 +10,7 @@ code_builder.Method _forCreateRequestMethod(String className, Iterable<Field> al
         code_builder.Parameter((p) => p
           ..named = true
           ..name = field.name
-          ..required = field.required
+          ..required = field.required == true
           ..type = field.fieldTypeRef(className)),
     ])
     ..body = code_builder.Block((bb) {
@@ -22,7 +22,7 @@ code_builder.Method _forCreateRequestMethod(String className, Iterable<Field> al
           })
         ]).statement;
 
-        if (field.required) {
+        if (field.required == true) {
           return addFieldCode;
         }
 

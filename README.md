@@ -42,6 +42,7 @@ pocketbase_utils:
   pb_schema_path: pb_schema.json # Optional. Sets the path of your collection schema file. Default: pb_schema.json
   output_dir: lib/generated/pocketbase # Optional. Sets the directory of generated model files. If the directory doesn't exist — it'll be created. Default: lib/generated/pocketbase
   line_length: 80 # Optional. Sets the length of line for dart formatter of generated code. Default: 80
+  generate_system_collections: false # Optional. Generate models for the system level collections like `_mfas`, `_otps`, and `_superusers`. Default: false
 ```
 
 ### 4. Run the generator
@@ -56,10 +57,10 @@ This will produce files inside `lib/generated/pocketbase` directory.
 You can also change the output folder to a custom directory by adding the `output_dir` line in your `pubspec.yaml` file.
 
 And then to build the `toJson` and `fromJson` run:
+
 ```sh
 dart run build_runner build --delete-conflicting-outputs
 ```
-
 
 ## Contributing
 

@@ -16,12 +16,14 @@ import '../utils/utils.dart';
 const _defaultPbSchemaPath = 'pb_schema.json';
 const _defaultOutputDir = 'lib/generated/pocketbase';
 const _defaultLineLength = 80;
+const _defaultGenerateSystemCollections = false;
 
 /// The generator of models files.
 class Generator {
   late String _pbSchemaPath;
   late String _outputDir;
   late int _lineLength;
+  late bool _generateSystemCollections;
 
   /// Creates a new generator with configuration from the 'pubspec.yaml' file.
   Generator() {
@@ -42,6 +44,8 @@ class Generator {
     }
 
     _lineLength = pubspecConfig.lineLength ?? _defaultLineLength;
+
+    _generateSystemCollections = pubspecConfig.generateSystemCollections ?? _defaultGenerateSystemCollections;
   }
 
   /// Generates collections models files.
@@ -76,7 +80,10 @@ class Generator {
 
     final collections = <Collection>[];
     for (Map<String, dynamic> collectionJson in pbSchemaDecoded) {
-      collections.add(Collection.fromJson(collectionJson));
+      final collectionModel = Collection.fromJson(collectionJson);
+      if (_generateSystemCollections || !collectionModel.system) {
+        collections.add(collectionModel);
+      }
     }
 
     createFileAndWrite(
