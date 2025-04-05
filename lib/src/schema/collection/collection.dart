@@ -73,20 +73,53 @@ final class Collection {
 
     final className = '${ReCase(name).pascalCase}Record';
 
+// enum AppointmentOfferMethod {
+//   @JsonValue(null)
+//   swaggerGeneratedUnknown(null),
+
+//   @JsonValue('single_employee')
+//   singleEmployee('single_employee'),
+//   @JsonValue('multiple_employees')
+//   multipleEmployees('multiple_employees');
+
+//   final String? value;
+
+//   const AppointmentOfferMethod(this.value);
+// }
+
     final enumFieldsCode = code_builder.Enum(
       (e) => e
         ..name = '${className}FieldsEnum'
+        ..fields.addAll([
+          code_builder.Field(
+            (f) => f
+              ..name = 'nameInSchema'
+              ..modifier = code_builder.FieldModifier.final$
+              ..type = code_builder.refer('String'),
+          )
+        ])
+        ..constructors.add(
+          code_builder.Constructor(
+            (co) => co
+              ..constant = true
+              ..requiredParameters.add(code_builder.Parameter((p) => p
+                ..toThis = true
+                ..name = 'nameInSchema')),
+          ),
+        )
         ..values.addAll([
           for (var field in allFieldsWithoutHidden)
             code_builder.EnumValue(
               (ev) => ev
-                ..name = field.name
+                ..name = field.nameInCamelCase
+                ..arguments.add(code_builder.literalString(field.name))
                 ..docs.addAll([if (field.docs != null) field.docs!]),
             ),
           for (var field in [...fields, ...superFields].where((f) => f.hidden))
             code_builder.EnumValue(
               (ev) => ev
-                ..name = 'hidden\$${field.name}'
+                ..name = 'hidden\$${field.nameInCamelCase}'
+                ..arguments.add(code_builder.literalString(field.name))
                 ..docs.addAll([if (field.docs != null) field.docs!]),
             ),
         ]),
@@ -98,11 +131,29 @@ final class Collection {
         code_builder.Enum(
           (e) => e
             ..name = field.enumTypeName(className)
+            ..fields.addAll([
+              code_builder.Field(
+                (f) => f
+                  ..name = 'nameInSchema'
+                  ..modifier = code_builder.FieldModifier.final$
+                  ..type = code_builder.refer('String'),
+              )
+            ])
+            ..constructors.add(
+              code_builder.Constructor(
+                (co) => co
+                  ..constant = true
+                  ..requiredParameters.add(code_builder.Parameter((p) => p
+                    ..toThis = true
+                    ..name = 'nameInSchema')),
+              ),
+            )
             ..values.addAll([
               if (field.values != null)
                 for (final value in field.values!)
                   code_builder.EnumValue((ev) => ev
                     ..name = ReCase(value).camelCase
+                    ..arguments.add(code_builder.literalString(value))
                     ..annotations.add(
                       code_builder
                           .refer('JsonValue', 'package:json_annotation/json_annotation.dart')

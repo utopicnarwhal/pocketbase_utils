@@ -8,7 +8,7 @@ code_builder.Constructor _defaultConstructor(List<Field>? superFields, List<Fiel
           for (var field in superFields)
             code_builder.Parameter(
               (p) => p
-                ..name = field.name
+                ..name = field.nameInCamelCase
                 ..named = true
                 ..toSuper = true
                 ..required = field.required == true
@@ -18,7 +18,7 @@ code_builder.Constructor _defaultConstructor(List<Field>? superFields, List<Fiel
           code_builder.Parameter(
             (p) => p
               ..toThis = true
-              ..name = field.name
+              ..name = field.nameInCamelCase
               ..named = true
               ..required = field.required == true
               ..docs.addAll([if (field.docs != null) field.docs!]),

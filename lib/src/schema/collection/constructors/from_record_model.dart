@@ -20,7 +20,7 @@ code_builder.Constructor _fromRecordModelConstructor(String className) {
                 .assign(code_builder.literalMap({
                   code_builder.literalSpread(): code_builder.refer('recordModel.data'),
                   for (var recordFieldName in ['id', 'collectionId', 'collectionName'])
-                    code_builder.refer('${className}FieldsEnum.$recordFieldName.name'):
+                    code_builder.refer('${className}FieldsEnum.$recordFieldName.nameInSchema'):
                         code_builder.refer('recordModel.$recordFieldName'),
                 }))
                 .statement,

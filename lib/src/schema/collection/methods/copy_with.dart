@@ -8,7 +8,7 @@ code_builder.Method _copyWithMethod(String className, Iterable<Field> allFieldsE
       for (final field in allFieldsExceptHidden.where((f) => !baseFields.contains(f)))
         code_builder.Parameter((p) => p
           ..named = true
-          ..name = field.name
+          ..name = field.nameInCamelCase
           ..type = field.fieldTypeRef(className, forceNullable: true)),
     ])
     ..body = code_builder.Block(
@@ -17,9 +17,11 @@ code_builder.Method _copyWithMethod(String className, Iterable<Field> allFieldsE
           code_builder
               .refer(className)
               .newInstance([], {
-                for (final baseField in baseFields) baseField.name: code_builder.refer(baseField.name),
+                for (final baseField in baseFields)
+                  baseField.nameInCamelCase: code_builder.refer(baseField.nameInCamelCase),
                 for (final field in allFieldsExceptHidden.where((f) => !baseFields.contains(f)))
-                  field.name: code_builder.refer('${field.name} ?? this.${field.name}'),
+                  field.nameInCamelCase:
+                      code_builder.refer('${field.nameInCamelCase} ?? this.${field.nameInCamelCase}'),
               })
               .returned
               .statement,
