@@ -23,7 +23,7 @@ String authRecordClassGenerator(int lineLength) {
             for (var field in baseFields.whereNot((sf) => sf.hidden))
               code_builder.Parameter(
                 (p) => p
-                  ..name = field.name
+                  ..name = field.nameInCamelCase
                   ..named = true
                   ..toSuper = true
                   ..required = field.required == true
@@ -33,7 +33,7 @@ String authRecordClassGenerator(int lineLength) {
               code_builder.Parameter(
                 (p) => p
                   ..toThis = true
-                  ..name = field.name
+                  ..name = field.nameInCamelCase
                   ..named = true
                   ..required = field.required == true
                   ..docs.addAll([if (field.docs != null) field.docs!]),
@@ -49,7 +49,7 @@ String authRecordClassGenerator(int lineLength) {
           ..lambda = true
           ..body = code_builder.literalList([
             code_builder.refer('super.props').spread,
-            for (var field in onlyAuthFields) code_builder.refer(field.name),
+            for (var field in onlyAuthFields) code_builder.refer(field.nameInCamelCase),
           ]).code),
       ]),
   );

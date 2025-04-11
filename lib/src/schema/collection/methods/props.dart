@@ -9,6 +9,6 @@ code_builder.Method _propsMethod(List<Field> schema) {
     ..lambda = true
     ..body = code_builder.literalList([
       code_builder.refer('super.props').spread,
-      for (var field in schema) code_builder.refer(field.name),
+      for (var field in schema) code_builder.refer(field.nameInCamelCase),
     ]).code);
 }

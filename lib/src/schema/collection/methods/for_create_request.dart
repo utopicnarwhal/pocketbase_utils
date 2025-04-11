@@ -9,7 +9,7 @@ code_builder.Method _forCreateRequestMethod(String className, Iterable<Field> al
       for (final field in allFieldsExceptHidden.where((f) => !baseFields.contains(f)))
         code_builder.Parameter((p) => p
           ..named = true
-          ..name = field.name
+          ..name = field.nameInCamelCase
           ..required = field.required == true
           ..type = field.fieldTypeRef(className)),
     ])
@@ -17,8 +17,9 @@ code_builder.Method _forCreateRequestMethod(String className, Iterable<Field> al
       code_builder.Code addFieldToResultWithCheckCode(Field field) {
         final addFieldCode = code_builder.refer('result').property('addAll').call([
           code_builder.literalMap({
-            code_builder.refer('${className}FieldsEnum.${field.name}.name'):
-                code_builder.refer('jsonMap').index(code_builder.refer('${className}FieldsEnum.${field.name}.name')),
+            code_builder.refer('${className}FieldsEnum.${field.nameInCamelCase}.nameInSchema'): code_builder
+                .refer('jsonMap')
+                .index(code_builder.refer('${className}FieldsEnum.${field.nameInCamelCase}.nameInSchema')),
           })
         ]).statement;
 
@@ -27,7 +28,7 @@ code_builder.Method _forCreateRequestMethod(String className, Iterable<Field> al
         }
 
         return ifStatement(
-          code_builder.refer(field.name).notEqualTo(code_builder.literalNull),
+          code_builder.refer(field.nameInCamelCase).notEqualTo(code_builder.literalNull),
           addFieldCode,
         );
       }
@@ -38,14 +39,14 @@ code_builder.Method _forCreateRequestMethod(String className, Iterable<Field> al
             .assign(
               code_builder.refer(className).newInstance([], {
                 for (final baseField in baseFields)
-                  baseField.name: switch (baseField.name) {
+                  baseField.nameInCamelCase: switch (baseField.nameInCamelCase) {
                     'id' => code_builder.literalString(''),
                     'created' || 'updated' => code_builder.refer('EmptyDateTime', 'empty_values.dart').newInstance([]),
-                    'collectionId' || 'collectionName' => code_builder.refer('\$${baseField.name}'),
-                    _ => code_builder.refer(baseField.name),
+                    'collectionId' || 'collectionName' => code_builder.refer('\$${baseField.nameInCamelCase}'),
+                    _ => code_builder.refer(baseField.nameInCamelCase),
                   },
                 for (final field in allFieldsExceptHidden.where((f) => !baseFields.contains(f)))
-                  field.name: code_builder.refer(field.name),
+                  field.nameInCamelCase: code_builder.refer(field.nameInCamelCase),
               }),
             )
             .property('toJson')

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+* Add support for collection fields that are not in camel case by default
+* Improve enums to support the non camel case values
+
 ## 0.1.0
 
 * Migrate the codebase to support only collection schema file from PocketBase version > 0.23.0

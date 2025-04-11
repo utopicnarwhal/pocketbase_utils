@@ -22,7 +22,7 @@ String baseRecordClassGenerator(int lineLength) {
               code_builder.Parameter(
                 (p) => p
                   ..toThis = true
-                  ..name = field.name
+                  ..name = field.nameInCamelCase
                   ..named = true
                   ..required = field.required == true,
               ),
@@ -36,7 +36,7 @@ String baseRecordClassGenerator(int lineLength) {
           ..name = 'props'
           ..lambda = true
           ..body = code_builder.literalList([
-            for (var field in baseFields) code_builder.refer(field.name),
+            for (var field in baseFields) code_builder.refer(field.nameInCamelCase),
           ]).code),
       ]),
   );

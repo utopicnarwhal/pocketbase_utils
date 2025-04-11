@@ -3,6 +3,7 @@ import 'package:code_builder/code_builder.dart' as code_builder;
 import 'package:pocketbase_utils/src/templates/date_time_json_methods.dart';
 import 'package:pocketbase_utils/src/utils/string_utils.dart';
 import 'package:pocketbase_utils/src/utils/utils.dart';
+import 'package:recase/recase.dart';
 
 part 'field.g.dart';
 
@@ -54,6 +55,8 @@ final class Field {
   final bool system;
   final String? docs;
 
+  String get nameInCamelCase => ReCase(name).camelCase;
+
   factory Field.fromJson(Map<String, dynamic> json) => _$FieldFromJson(json);
 
   Map<String, dynamic> toJson() => _$FieldToJson(this);
@@ -83,20 +86,26 @@ final class Field {
   }
 
   code_builder.Expression? fieldAnnotation(String className) {
-    var result = switch (type) {
-      FieldType.date => code_builder.refer('JsonKey', 'package:json_annotation/json_annotation.dart').newInstance(
-          [],
-          {
-            'toJson': required == true
-                ? code_builder.refer(pocketBaseDateTimeToJsonMethodName)
-                : code_builder.refer(pocketBaseNullableDateTimeToJsonMethodName),
-            'fromJson': required == true
-                ? code_builder.refer(pocketBaseDateTimeFromJsonMethodName)
-                : code_builder.refer(pocketBaseNullableDateTimeFromJsonMethodName),
-          },
-        ),
-      _ => null,
+    code_builder.Expression? result;
+
+    final jsonKeyNamedArguments = <String, code_builder.Expression>{
+      if (type == FieldType.date) ...{
+        'toJson': required == true
+            ? code_builder.refer(pocketBaseDateTimeToJsonMethodName)
+            : code_builder.refer(pocketBaseNullableDateTimeToJsonMethodName),
+        'fromJson': required == true
+            ? code_builder.refer(pocketBaseDateTimeFromJsonMethodName)
+            : code_builder.refer(pocketBaseNullableDateTimeFromJsonMethodName),
+      },
+      if (name != nameInCamelCase) 'name': code_builder.literal(name),
     };
+
+    if (jsonKeyNamedArguments.isNotEmpty) {
+      result = code_builder.refer('JsonKey', 'package:json_annotation/json_annotation.dart').newInstance(
+        [],
+        jsonKeyNamedArguments,
+      );
+    }
 
     return result;
   }
@@ -106,7 +115,7 @@ final class Field {
       final annotation = fieldAnnotation(className);
 
       f
-        ..name = name
+        ..name = nameInCamelCase
         ..modifier = code_builder.FieldModifier.final$
         ..type = fieldTypeRef(className)
         ..annotations.addAll([
