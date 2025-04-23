@@ -21,6 +21,7 @@ enum FieldType {
   file,
   json,
   password,
+  geoPoint,
 }
 
 @JsonSerializable()
@@ -76,6 +77,7 @@ final class Field {
       FieldType.relation => maxSelect == 1 ? 'String' : 'List<String>',
       FieldType.file => maxSelect == 1 ? 'String' : 'List<String>',
       FieldType.json => 'dynamic',
+      FieldType.geoPoint => 'GeoPoint',
     };
 
     if ((required != true || forceNullable) && fieldTypeRef != 'dynamic') {

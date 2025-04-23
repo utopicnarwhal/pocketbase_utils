@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+* Add support for `geoPoint` field type.
+
 ## 0.1.1
 
 * Add support for collection fields that are not in camel case by default

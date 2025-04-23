@@ -51,4 +51,5 @@ const _$FieldTypeEnumMap = {
   FieldType.file: 'file',
   FieldType.json: 'json',
   FieldType.password: 'password',
+  FieldType.geoPoint: 'geoPoint',
 };

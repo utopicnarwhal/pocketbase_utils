@@ -73,20 +73,6 @@ final class Collection {
 
     final className = '${ReCase(name).pascalCase}Record';
 
-// enum AppointmentOfferMethod {
-//   @JsonValue(null)
-//   swaggerGeneratedUnknown(null),
-
-//   @JsonValue('single_employee')
-//   singleEmployee('single_employee'),
-//   @JsonValue('multiple_employees')
-//   multipleEmployees('multiple_employees');
-
-//   final String? value;
-
-//   const AppointmentOfferMethod(this.value);
-// }
-
     final enumFieldsCode = code_builder.Enum(
       (e) => e
         ..name = '${className}FieldsEnum'
@@ -215,7 +201,10 @@ final class Collection {
         ..ignoreForFile.add('unused_import')
         ..directives.addAll([
           code_builder.Directive.part('$fileName.g.dart'),
+          // We need to always import these to make the import directives in `$fileName.g.dart` work
+          // The `refer` method makes the imports with ending `import '...' as _i1` which breakes the improrts in part file
           code_builder.Directive.import('date_time_json_methods.dart'),
+          code_builder.Directive.import('geo_point_class.dart'),
           code_builder.Directive.import('package:json_annotation/json_annotation.dart'),
         ]),
     );

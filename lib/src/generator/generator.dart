@@ -7,6 +7,7 @@ import 'package:pocketbase_utils/src/templates/auth_record.dart';
 import 'package:pocketbase_utils/src/templates/base_record.dart';
 import 'package:pocketbase_utils/src/templates/date_time_json_methods.dart';
 import 'package:pocketbase_utils/src/templates/empty_values.dart';
+import 'package:pocketbase_utils/src/templates/geo_point_class.dart';
 import 'package:recase/recase.dart';
 
 import '../config/pubspec_config.dart';
@@ -101,6 +102,10 @@ class Generator {
     createFileAndWrite(
       path.join(outputDirectory.path, 'date_time_json_methods.dart'),
       dateTimeJsonMethodsGenerator(_lineLength),
+    );
+    createFileAndWrite(
+      path.join(outputDirectory.path, 'geo_point_class.dart'),
+      geoPointClassGenerator('geo_point_class', _lineLength),
     );
 
     for (var collection in collections) {
