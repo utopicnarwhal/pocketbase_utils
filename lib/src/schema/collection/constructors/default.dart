@@ -33,7 +33,7 @@ code_builder.Constructor _defaultConstructor(
           {
             for (var field in schema)
               if (fieldsToOverride.any((e) => e.name == field.name))
-                field.name: code_builder.refer('this.${field.nameInCamelCase}'),
+                field.name: code_builder.refer(field.nameInCamelCase),
           },
         ).code,
       ),
