@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3
+
+* Remove "username" field from the "system" fields of the Auth collection.
+* Making "email" Auth collection system field to be not required.
+
 ## 0.1.2
 
 * Add support for `geoPoint` field type.
