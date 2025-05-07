@@ -33,9 +33,9 @@ final class Field {
     this.min,
     this.max,
     this.onlyInt,
-    this.required,
     this.id,
     this.values,
+    this.required = false,
     this.hidden = false,
     this.system = false,
     this.docs,
@@ -45,9 +45,9 @@ final class Field {
   final String name;
   final FieldType type;
 
-  /// "Nonempty" checkbox in the PocketBase admin panel.
-  /// If this is set to true, the value can not be nullable.
-  final bool? required;
+  /// "Nonempty" or "Nonfalsey" checkbox in the PocketBase admin panel.
+  /// If this is set to true, the value can not be nullable, empty string, or false.
+  final bool required;
 
   final int? maxSelect;
   @JsonKey(fromJson: jsonValueParseToInt)
@@ -77,6 +77,12 @@ final class Field {
 
   String enumTypeName(String className) => '$className${name.capFirstChar()}Enum';
 
+  /// [hidden] property makes any field nullable.
+  ///
+  /// For bool type fields the [required] property is the "Nonfalsey" toggle in the admin panel.
+  bool get isNullable => hidden || (required == false && type != FieldType.bool);
+  bool get isNonNullable => !isNullable;
+
   code_builder.Reference fieldTypeRef(String className, {forceNullable = false}) {
     var fieldTypeRef = switch (type) {
       FieldType.text || FieldType.editor || FieldType.email || FieldType.url || FieldType.password => 'String',
@@ -91,7 +97,7 @@ final class Field {
       FieldType.geoPoint => 'GeoPoint',
     };
 
-    if ((required != true || forceNullable) && fieldTypeRef != 'dynamic') {
+    if (fieldTypeRef != 'dynamic' && (isNullable || forceNullable)) {
       fieldTypeRef += '?';
     }
 
@@ -187,13 +193,11 @@ const authFields = [
   Field(
     name: 'emailVisibility',
     type: FieldType.bool,
-    required: true,
     system: true,
   ),
   Field(
     name: 'verified',
     type: FieldType.bool,
-    required: true,
     system: true,
   ),
   Field(
@@ -207,7 +211,7 @@ const authFields = [
     name: 'password',
     type: FieldType.password,
     hidden: true,
-    required: false,
+    required: true,
     system: true,
   ),
   Field(

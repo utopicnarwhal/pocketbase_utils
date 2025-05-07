@@ -14,7 +14,7 @@ code_builder.Constructor _defaultConstructor(
               ..name = field.nameInCamelCase
               ..named = true
               ..toSuper = true
-              ..required = field.required == true
+              ..required = field.isNonNullable
               ..docs.addAll([if (field.docs != null) field.docs!]),
           ),
         for (var field in schema)
@@ -23,7 +23,7 @@ code_builder.Constructor _defaultConstructor(
               ..toThis = true
               ..name = field.nameInCamelCase
               ..named = true
-              ..required = field.required == true
+              ..required = field.isNonNullable
               ..docs.addAll([if (field.docs != null) field.docs!]),
           ),
       ])

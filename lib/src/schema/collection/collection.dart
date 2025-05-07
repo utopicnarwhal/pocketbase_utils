@@ -61,7 +61,12 @@ final class Collection {
         superFields.addAll(baseFields);
       case CollectionType.auth:
         extend = code_builder.refer('AuthRecord', 'auth_record.dart');
-        final isEmailFieldInSchemaRequired = fields.firstWhereOrNull((e) => e.name == 'email')?.required == true;
+
+        /// We override the "email" field to a non-nullable one in case when
+        /// the schema has both "email" and "emailVisibility" fields set to "required"
+        /// because otherwise it can be hidden from the API response or be null.
+        final isEmailFieldInSchemaRequired = fields.firstWhereOrNull((e) => e.name == 'email')?.required == true &&
+            fields.firstWhereOrNull((e) => e.name == 'emailVisibility')?.required == true;
 
         if (isEmailFieldInSchemaRequired) {
           for (final field in authFields) {

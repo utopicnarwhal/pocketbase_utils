@@ -26,7 +26,7 @@ String authRecordClassGenerator(int lineLength) {
                   ..name = field.nameInCamelCase
                   ..named = true
                   ..toSuper = true
-                  ..required = field.required == true
+                  ..required = field.isNonNullable
                   ..docs.addAll([if (field.docs != null) field.docs!]),
               ),
             for (var field in onlyAuthFields)
@@ -35,7 +35,7 @@ String authRecordClassGenerator(int lineLength) {
                   ..toThis = true
                   ..name = field.nameInCamelCase
                   ..named = true
-                  ..required = field.required == true
+                  ..required = field.isNonNullable
                   ..docs.addAll([if (field.docs != null) field.docs!]),
               ),
           ])),

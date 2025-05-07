@@ -24,7 +24,7 @@ String baseRecordClassGenerator(int lineLength) {
                   ..toThis = true
                   ..name = field.nameInCamelCase
                   ..named = true
-                  ..required = field.required == true,
+                  ..required = field.isNonNullable,
               ),
           ])),
       ])
