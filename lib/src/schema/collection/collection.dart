@@ -51,7 +51,9 @@ final class Collection {
   String generateClassCode(String fileName, int lineLength) {
     final code_builder.Reference? extend;
     final superFields = <Field>[];
-    final fieldsWithoutSuperFieldsAndHidden = fields.whereNot((f) => f.hidden).toList();
+
+    /// A list of fields that has to be overridden in the generated class
+    final fieldsToOverride = <Field>[];
 
     switch (type) {
       case CollectionType.base:
@@ -59,15 +61,33 @@ final class Collection {
         superFields.addAll(baseFields);
       case CollectionType.auth:
         extend = code_builder.refer('AuthRecord', 'auth_record.dart');
-        superFields.addAll(authFields);
+
+        /// We override the "email" field to a non-nullable one in case when
+        /// the schema has both "email" and "emailVisibility" fields set to "required"
+        /// because otherwise it can be hidden from the API response or be null.
+        final isEmailFieldInSchemaRequired = fields.firstWhereOrNull((e) => e.name == 'email')?.required == true &&
+            fields.firstWhereOrNull((e) => e.name == 'emailVisibility')?.required == true;
+
+        if (isEmailFieldInSchemaRequired) {
+          for (final field in authFields) {
+            if (field.name == 'email') {
+              fieldsToOverride.add(field);
+            } else {
+              superFields.add(field);
+            }
+          }
+        } else {
+          superFields.addAll(authFields);
+        }
       case CollectionType.view:
         return '';
     }
 
-    final superFieldsWithoutHidden = superFields.whereNot((f) => f.hidden).toList();
-
+    final fieldsWithoutSuperFields = fields.whereNot((f) => superFields.any((sf) => sf.name == f.name)).toList();
+    final fieldsWithoutSuperFieldsAndHidden = fieldsWithoutSuperFields.whereNot((f) => f.hidden).toList();
     fieldsWithoutSuperFieldsAndHidden.sort((a, b) => a.required == b.required ? 0 : (a.required == true ? -1 : 1));
-    fieldsWithoutSuperFieldsAndHidden.removeWhere((f) => superFieldsWithoutHidden.any((sf) => sf.name == f.name));
+
+    final superFieldsWithoutHidden = superFields.whereNot((f) => f.hidden).toList();
 
     final allFieldsWithoutHidden = [...superFieldsWithoutHidden, ...fieldsWithoutSuperFieldsAndHidden].toList();
 
@@ -101,7 +121,7 @@ final class Collection {
                 ..arguments.add(code_builder.literalString(field.name))
                 ..docs.addAll([if (field.docs != null) field.docs!]),
             ),
-          for (var field in [...fields, ...superFields].where((f) => f.hidden))
+          for (var field in [...fieldsWithoutSuperFields, ...superFields].where((f) => f.hidden))
             code_builder.EnumValue(
               (ev) => ev
                 ..name = 'hidden\$${field.nameInCamelCase}'
@@ -158,7 +178,10 @@ final class Collection {
             .add(code_builder.refer('JsonSerializable', 'package:json_annotation/json_annotation.dart').newInstance([]))
         ..fields.addAll([
           for (var field in fieldsWithoutSuperFieldsAndHidden) ...[
-            field.toCodeBuilder(className),
+            field.toCodeBuilder(
+              className,
+              shouldOverride: fieldsToOverride.any((e) => e.name == field.name),
+            ),
             ...field.additionalFieldOptionsAsFields(),
           ],
           for (var staticCollectionRefFieldName in ['collectionId', 'collectionName'])
@@ -177,7 +200,7 @@ final class Collection {
             ),
         ])
         ..constructors.addAll([
-          _defaultConstructor(superFieldsWithoutHidden, fieldsWithoutSuperFieldsAndHidden),
+          _defaultConstructor(superFieldsWithoutHidden, fieldsWithoutSuperFieldsAndHidden, fieldsToOverride),
           _fromJsonConstructor(className),
           _fromRecordModelConstructor(className),
         ])

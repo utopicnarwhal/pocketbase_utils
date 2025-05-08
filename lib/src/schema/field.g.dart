@@ -13,10 +13,10 @@ Field _$FieldFromJson(Map<String, dynamic> json) => Field(
       min: jsonValueParseToInt(json['min']),
       max: jsonValueParseToInt(json['max']),
       onlyInt: json['onlyInt'] as bool?,
-      required: json['required'] as bool?,
       id: json['id'] as String?,
       values:
           (json['values'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      required: json['required'] as bool? ?? false,
       hidden: json['hidden'] as bool? ?? false,
       system: json['system'] as bool? ?? false,
       docs: json['docs'] as String?,

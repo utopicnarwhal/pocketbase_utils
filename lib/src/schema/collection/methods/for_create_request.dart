@@ -10,7 +10,7 @@ code_builder.Method _forCreateRequestMethod(String className, Iterable<Field> al
         code_builder.Parameter((p) => p
           ..named = true
           ..name = field.nameInCamelCase
-          ..required = field.required == true
+          ..required = field.isNonNullable
           ..type = field.fieldTypeRef(className)),
     ])
     ..body = code_builder.Block((bb) {
@@ -23,7 +23,7 @@ code_builder.Method _forCreateRequestMethod(String className, Iterable<Field> al
           })
         ]).statement;
 
-        if (field.required == true) {
+        if (field.isNonNullable) {
           return addFieldCode;
         }
 

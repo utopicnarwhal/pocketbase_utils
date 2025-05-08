@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3
+
+* Remove "username" field from the "system" fields of the Auth collection.
+* Making "email" Auth collection system field required only when the collection has both "emailVisibility" and "email" fields set to "required".
+* Make boolean fields to be nullable only when "hidden" instead of "required".
+* Loosen the "analyzer" dependency
+
 ## 0.1.2
 
 * Add support for `geoPoint` field type.
