@@ -8,7 +8,7 @@ String emptyValuesGenerator(int lineLength) {
     ..extend = code_builder.refer('DateTime')
     ..constructors.addAll([
       code_builder.Constructor(
-        (d) => d..initializers.add(code_builder.Code('super(0)')),
+        (d) => d..initializers.add(const code_builder.Code('super(0)')),
       )
     ]));
 

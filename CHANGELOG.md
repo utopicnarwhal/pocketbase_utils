@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4
+
+* Apply 120 line length
+* Add `very_good_analysis` package
+* Run `dart fix`
+
 ## 0.1.3
 
 * Remove "username" field from the "system" fields of the Auth collection.

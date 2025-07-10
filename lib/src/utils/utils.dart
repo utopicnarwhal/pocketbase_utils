@@ -26,5 +26,5 @@ int? jsonValueParseToInt(dynamic value) {
     }
     return int.parse(value);
   }
-  throw Exception('The type of value `$value` isn\'t `String` or `int`');
+  throw Exception("The type of value `$value` isn't `String` or `int`");
 }

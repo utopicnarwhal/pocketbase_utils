@@ -8,7 +8,7 @@ code_builder.Constructor _defaultConstructor(
   return code_builder.Constructor(
     (d) => d
       ..optionalParameters.addAll([
-        for (var field in superFields)
+        for (final field in superFields)
           code_builder.Parameter(
             (p) => p
               ..name = field.nameInCamelCase
@@ -17,7 +17,7 @@ code_builder.Constructor _defaultConstructor(
               ..required = field.isNonNullable
               ..docs.addAll([if (field.docs != null) field.docs!]),
           ),
-        for (var field in schema)
+        for (final field in schema)
           code_builder.Parameter(
             (p) => p
               ..toThis = true
@@ -31,7 +31,7 @@ code_builder.Constructor _defaultConstructor(
         code_builder.refer('super').call(
           [],
           {
-            for (var field in schema)
+            for (final field in schema)
               if (fieldsToOverride.any((e) => e.name == field.name))
                 field.name: code_builder.refer(field.nameInCamelCase),
           },

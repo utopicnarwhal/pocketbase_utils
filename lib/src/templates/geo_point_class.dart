@@ -3,7 +3,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:pocketbase_utils/src/templates/do_not_modify_by_hand.dart';
 
 String geoPointClassGenerator(String fileName, int lineLength) {
-  final className = 'GeoPoint';
+  const className = 'GeoPoint';
 
   final classCode = code_builder.Class((c) => c
     ..annotations
@@ -37,7 +37,7 @@ String geoPointClassGenerator(String fileName, int lineLength) {
                 ..name = 'json',
             ),
           )
-          ..body = code_builder.Code('_\$${className}FromJson(json)'),
+          ..body = const code_builder.Code('_\$${className}FromJson(json)'),
       ),
     ])
     ..methods.addAll([
@@ -45,7 +45,7 @@ String geoPointClassGenerator(String fileName, int lineLength) {
         ..returns = code_builder.refer('Map<String, dynamic>')
         ..name = 'toJson'
         ..lambda = true
-        ..body = code_builder.Code('_\$${className}ToJson(this)')),
+        ..body = const code_builder.Code('_\$${className}ToJson(this)')),
       code_builder.Method((m) => m
         ..annotations.add(code_builder.refer('override'))
         ..returns = code_builder.refer('List<Object?>')

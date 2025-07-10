@@ -12,9 +12,9 @@ Directory getRootDirectory() => Directory.current;
 
 /// Gets the pubspec file.
 File? getPubspecFile() {
-  var rootDirPath = getRootDirectoryPath();
-  var pubspecFilePath = path.join(rootDirPath, 'pubspec.yaml');
-  var pubspecFile = File(pubspecFilePath);
+  final rootDirPath = getRootDirectoryPath();
+  final pubspecFilePath = path.join(rootDirPath, 'pubspec.yaml');
+  final pubspecFile = File(pubspecFilePath);
 
   return pubspecFile.existsSync() ? pubspecFile : null;
 }

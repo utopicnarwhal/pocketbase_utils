@@ -1,4 +1,5 @@
-const doNotModifyByHandTemplate = r"""GENERATED CODE - DO NOT MODIFY BY HAND
+const doNotModifyByHandTemplate = '''
+GENERATED CODE - DO NOT MODIFY BY HAND
 // *****************************************************
 // POCKETBASE_UTILS
 // *****************************************************
@@ -6,4 +7,4 @@ const doNotModifyByHandTemplate = r"""GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
 // ignore_for_file: type=lint
 
-""";
+''';

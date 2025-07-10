@@ -6,12 +6,12 @@ Block ifStatement(
   bool addCurlyBraces = true,
 }) {
   return Block.of([
-    Code('if ('),
+    const Code('if ('),
     conditional.code,
-    Code(')'),
-    if (addCurlyBraces) Code('{'),
+    const Code(')'),
+    if (addCurlyBraces) const Code('{'),
     body,
-    if (addCurlyBraces) Code('}'),
+    if (addCurlyBraces) const Code('}'),
   ]);
 }
 
@@ -21,10 +21,10 @@ Block forLoop(
   bool addCurlyBraces = true,
 }) {
   return Block.of([
-    Code('for '),
+    const Code('for '),
     defineLoopCode.parenthesized.code,
-    if (addCurlyBraces) Code('{'),
+    if (addCurlyBraces) const Code('{'),
     body,
-    if (addCurlyBraces) Code('}'),
+    if (addCurlyBraces) const Code('}'),
   ]);
 }

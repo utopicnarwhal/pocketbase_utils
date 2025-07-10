@@ -4,7 +4,7 @@ import 'package:pocketbase_utils/src/schema/field.dart';
 import 'package:pocketbase_utils/src/templates/do_not_modify_by_hand.dart';
 
 String baseRecordClassGenerator(int lineLength) {
-  final className = 'BaseRecord';
+  const className = 'BaseRecord';
 
   final classCode = code_builder.Class(
     (c) => c
@@ -13,12 +13,12 @@ String baseRecordClassGenerator(int lineLength) {
       ..modifier = code_builder.ClassModifier.base
       ..extend = code_builder.refer('Equatable', 'package:equatable/equatable.dart')
       ..fields.addAll([
-        for (var field in baseFields) field.toCodeBuilder(className),
+        for (final field in baseFields) field.toCodeBuilder(className),
       ])
       ..constructors.addAll([
         code_builder.Constructor((d) => d
           ..optionalParameters.addAll([
-            for (var field in baseFields)
+            for (final field in baseFields)
               code_builder.Parameter(
                 (p) => p
                   ..toThis = true
@@ -36,7 +36,7 @@ String baseRecordClassGenerator(int lineLength) {
           ..name = 'props'
           ..lambda = true
           ..body = code_builder.literalList([
-            for (var field in baseFields) code_builder.refer(field.nameInCamelCase),
+            for (final field in baseFields) code_builder.refer(field.nameInCamelCase),
           ]).code),
       ]),
   );

@@ -1,5 +1,5 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:code_builder/code_builder.dart' as code_builder;
+import 'package:json_annotation/json_annotation.dart';
 import 'package:pocketbase_utils/src/templates/date_time_json_methods.dart';
 import 'package:pocketbase_utils/src/utils/string_utils.dart';
 import 'package:pocketbase_utils/src/utils/utils.dart';
@@ -41,6 +41,8 @@ final class Field {
     this.docs,
   });
 
+  factory Field.fromJson(Map<String, dynamic> json) => _$FieldFromJson(json);
+
   final String? id;
   final String name;
   final FieldType type;
@@ -69,8 +71,6 @@ final class Field {
 
   String get nameInCamelCase => ReCase(name).camelCase;
 
-  factory Field.fromJson(Map<String, dynamic> json) => _$FieldFromJson(json);
-
   Map<String, dynamic> toJson() => _$FieldToJson(this);
 
   bool get hiddenOrSystem => hidden || system;
@@ -83,7 +83,7 @@ final class Field {
   bool get isNullable => hidden || (required == false && type != FieldType.bool);
   bool get isNonNullable => !isNullable;
 
-  code_builder.Reference fieldTypeRef(String className, {forceNullable = false}) {
+  code_builder.Reference fieldTypeRef(String className, {bool forceNullable = false}) {
     var fieldTypeRef = switch (type) {
       FieldType.text || FieldType.editor || FieldType.email || FieldType.url || FieldType.password => 'String',
       FieldType.number => onlyInt == true ? 'int' : 'double',
@@ -183,7 +183,7 @@ const baseFields = [
   ),
 ];
 
-const authFields = [
+const List<Field> authFields = [
   ...baseFields,
   Field(
     name: 'email',
@@ -218,7 +218,6 @@ const authFields = [
     name: 'passwordConfirm',
     type: FieldType.text,
     hidden: true,
-    required: false,
     system: true,
   ),
 ];

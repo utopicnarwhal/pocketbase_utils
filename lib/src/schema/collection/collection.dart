@@ -38,13 +38,13 @@ final class Collection {
     required this.fields,
   });
 
+  factory Collection.fromJson(Map<String, dynamic> json) => _$CollectionFromJson(json);
+
   final String id;
   final String name;
   final CollectionType type;
   final bool system;
   final List<Field> fields;
-
-  factory Collection.fromJson(Map<String, dynamic> json) => _$CollectionFromJson(json);
 
   Map<String, dynamic> toJson() => _$CollectionToJson(this);
 
@@ -84,8 +84,8 @@ final class Collection {
     }
 
     final fieldsWithoutSuperFields = fields.whereNot((f) => superFields.any((sf) => sf.name == f.name)).toList();
-    final fieldsWithoutSuperFieldsAndHidden = fieldsWithoutSuperFields.whereNot((f) => f.hidden).toList();
-    fieldsWithoutSuperFieldsAndHidden.sort((a, b) => a.required == b.required ? 0 : (a.required == true ? -1 : 1));
+    final fieldsWithoutSuperFieldsAndHidden = fieldsWithoutSuperFields.whereNot((f) => f.hidden).toList()
+      ..sort((a, b) => a.required == b.required ? 0 : (a.required == true ? -1 : 1));
 
     final superFieldsWithoutHidden = superFields.whereNot((f) => f.hidden).toList();
 
@@ -114,14 +114,14 @@ final class Collection {
           ),
         )
         ..values.addAll([
-          for (var field in allFieldsWithoutHidden)
+          for (final field in allFieldsWithoutHidden)
             code_builder.EnumValue(
               (ev) => ev
                 ..name = field.nameInCamelCase
                 ..arguments.add(code_builder.literalString(field.name))
                 ..docs.addAll([if (field.docs != null) field.docs!]),
             ),
-          for (var field in [...fieldsWithoutSuperFields, ...superFields].where((f) => f.hidden))
+          for (final field in [...fieldsWithoutSuperFields, ...superFields].where((f) => f.hidden))
             code_builder.EnumValue(
               (ev) => ev
                 ..name = 'hidden\$${field.nameInCamelCase}'
@@ -177,14 +177,14 @@ final class Collection {
         ..annotations
             .add(code_builder.refer('JsonSerializable', 'package:json_annotation/json_annotation.dart').newInstance([]))
         ..fields.addAll([
-          for (var field in fieldsWithoutSuperFieldsAndHidden) ...[
+          for (final field in fieldsWithoutSuperFieldsAndHidden) ...[
             field.toCodeBuilder(
               className,
               shouldOverride: fieldsToOverride.any((e) => e.name == field.name),
             ),
             ...field.additionalFieldOptionsAsFields(),
           ],
-          for (var staticCollectionRefFieldName in ['collectionId', 'collectionName'])
+          for (final staticCollectionRefFieldName in ['collectionId', 'collectionName'])
             code_builder.Field(
               (f) => f
                 ..name = '\$$staticCollectionRefFieldName'

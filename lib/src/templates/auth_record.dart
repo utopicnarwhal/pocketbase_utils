@@ -5,7 +5,7 @@ import 'package:pocketbase_utils/src/schema/field.dart';
 import 'package:pocketbase_utils/src/templates/do_not_modify_by_hand.dart';
 
 String authRecordClassGenerator(int lineLength) {
-  final className = 'AuthRecord';
+  const className = 'AuthRecord';
   final onlyAuthFields = authFields.whereNot((sf) => sf.hidden || baseFields.contains(sf));
 
   final classCode = code_builder.Class(
@@ -15,12 +15,12 @@ String authRecordClassGenerator(int lineLength) {
       ..modifier = code_builder.ClassModifier.base
       ..extend = code_builder.refer('BaseRecord', 'base_record.dart')
       ..fields.addAll([
-        for (var field in onlyAuthFields) field.toCodeBuilder(className),
+        for (final field in onlyAuthFields) field.toCodeBuilder(className),
       ])
       ..constructors.addAll([
         code_builder.Constructor((d) => d
           ..optionalParameters.addAll([
-            for (var field in baseFields.whereNot((sf) => sf.hidden))
+            for (final field in baseFields.whereNot((sf) => sf.hidden))
               code_builder.Parameter(
                 (p) => p
                   ..name = field.nameInCamelCase
@@ -29,7 +29,7 @@ String authRecordClassGenerator(int lineLength) {
                   ..required = field.isNonNullable
                   ..docs.addAll([if (field.docs != null) field.docs!]),
               ),
-            for (var field in onlyAuthFields)
+            for (final field in onlyAuthFields)
               code_builder.Parameter(
                 (p) => p
                   ..toThis = true
@@ -49,7 +49,7 @@ String authRecordClassGenerator(int lineLength) {
           ..lambda = true
           ..body = code_builder.literalList([
             code_builder.refer('super.props').spread,
-            for (var field in onlyAuthFields) code_builder.refer(field.nameInCamelCase),
+            for (final field in onlyAuthFields) code_builder.refer(field.nameInCamelCase),
           ]).code),
       ]),
   );
