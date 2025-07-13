@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5
+
+* Add `JsonKey.nullForUndefinedEnumValue` of `unknownEnumValue` for nullable select fields
+
 ## 0.1.4
 
 * Apply 120 line length

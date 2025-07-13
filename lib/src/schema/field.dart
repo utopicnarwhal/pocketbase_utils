@@ -117,6 +117,10 @@ final class Field {
             : code_builder.refer(pocketBaseNullableDateTimeFromJsonMethodName),
       },
       if (name != nameInCamelCase) 'name': code_builder.literal(name),
+      if (type == FieldType.select && isNullable)
+        'unknownEnumValue': code_builder
+            .refer('JsonKey', 'package:json_annotation/json_annotation.dart')
+            .property('nullForUndefinedEnumValue')
     };
 
     if (jsonKeyNamedArguments.isNotEmpty) {
