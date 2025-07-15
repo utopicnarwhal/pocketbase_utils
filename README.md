@@ -28,7 +28,13 @@ dev_dependencies:
     pocketbase_utils: x.x.x
 ```
 
-You also may have to install the [json_serializable](https://pub.dev/packages/json_serializable), [equatable](https://pub.dev/packages/equatable), [collection](https://pub.dev/packages/collection), and [pocketbase](https://pub.dev/packages/pocketbase) packages.
+Or instead of installing it to your `dev_dependencies` you can just activate it globally by running:
+
+```sh
+dart pub global activate pocketbase_utils
+```
+
+You also may have to install the [build_runner](https://pub.dev/packages/build_runner),[json_serializable](https://pub.dev/packages/json_serializable), [equatable](https://pub.dev/packages/equatable), [collection](https://pub.dev/packages/collection), and [pocketbase](https://pub.dev/packages/pocketbase) packages.
 
 ### 3. Configure package
 

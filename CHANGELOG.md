@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.6
+
+* Bump min dart sdk version to 3.8.0
+* Upgrade packages
+
 ## 0.1.5
 
 * Add `JsonKey.nullForUndefinedEnumValue` of `unknownEnumValue` for nullable select fields
