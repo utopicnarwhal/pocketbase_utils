@@ -28,7 +28,7 @@ dev_dependencies:
     pocketbase_utils: x.x.x
 ```
 
-Or instead of installing it to your `dev_dependencies` you can just activate it globally by running:
+Or instead of installing it to your `dev_dependencies` you can just use the [`dart pub global`](https://dart.dev/tools/pub/cmd/pub-global):
 
 ```sh
 dart pub global activate pocketbase_utils
@@ -58,6 +58,14 @@ In the root of your flutter project run:
 ```sh
 dart run pocketbase_utils:generate
 ```
+
+Or if you used the `dart pub global activate`:
+
+```sh
+pbutil-gen
+```
+
+⬆️ If this doesn't work, you might need to [set up your path](https://dart.dev/tools/pub/cmd/pub-global#running-a-script-from-your-path).
 
 This will produce files inside `lib/generated/pocketbase` directory.
 You can also change the output folder to a custom directory by adding the `output_dir` line in your `pubspec.yaml` file.

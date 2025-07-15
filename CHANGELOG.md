@@ -4,6 +4,7 @@
 
 * Bump min dart sdk version to 3.8.0
 * Upgrade packages
+* Option to run the generator without adding to dependencies by using the `dart pub global activate`
 
 ## 0.1.5
 
