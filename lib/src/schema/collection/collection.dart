@@ -16,6 +16,7 @@ part 'methods/for_create_request.dart';
 part 'methods/props.dart';
 part 'methods/take_diff.dart';
 part 'methods/to_json.dart';
+part 'methods/customs.dart';
 
 enum CollectionType {
   /// [Read more](https://pocketbase.io/docs/collections/#auth-collection)
@@ -45,6 +46,7 @@ final class Collection {
   final CollectionType type;
   final bool system;
   final List<Field> fields;
+  bool _expand = false;
 
   Map<String, dynamic> toJson() => _$CollectionToJson(this);
 
@@ -169,6 +171,17 @@ final class Collection {
         ),
     ];
 
+    final methodsArray = [
+      _toJsonMethod(className),
+      _copyWithMethod(className, allFieldsWithoutHidden),
+      _takeDiffMethod(className, allFieldsWithoutHidden),
+      _propsMethod(fieldsWithoutSuperFieldsAndHidden),
+      _forCreateRequestMethod(className, allFieldsWithoutHidden),
+    ];
+    if (_expand) {
+      methodsArray.add(_getExpandAndEnrich(allFieldsWithoutHidden));
+    }
+
     final classCode = code_builder.Class(
       (c) => c
         ..name = className
@@ -204,13 +217,7 @@ final class Collection {
           _fromJsonConstructor(className),
           _fromRecordModelConstructor(className),
         ])
-        ..methods.addAll([
-          _toJsonMethod(className),
-          _copyWithMethod(className, allFieldsWithoutHidden),
-          _takeDiffMethod(className, allFieldsWithoutHidden),
-          _propsMethod(fieldsWithoutSuperFieldsAndHidden),
-          _forCreateRequestMethod(className, allFieldsWithoutHidden),
-        ]),
+        ..methods.addAll(methodsArray),
     );
 
     final libraryCode = code_builder.Library(
@@ -242,4 +249,6 @@ final class Collection {
       pageWidth: lineLength,
     ).format('${libraryCode.accept(emitter)}');
   }
+
+  void withExpand() => _expand = true;
 }

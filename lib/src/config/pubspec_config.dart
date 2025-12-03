@@ -32,6 +32,8 @@ class PubspecConfig {
     _generateSystemCollections = pocketbaseUtilsConfig['generate_system_collections'] is bool
         ? pocketbaseUtilsConfig['generate_system_collections'] as bool
         : null;
+    _generateExpand = pocketbaseUtilsConfig['generate_expand'] is bool
+        ? pocketbaseUtilsConfig['generate_expand'] as bool : null;
   }
 
   bool? _enabled;
@@ -39,6 +41,7 @@ class PubspecConfig {
   String? _outputDir;
   int? _lineLength;
   bool? _generateSystemCollections;
+  bool? _generateExpand;
 
   bool? get enabled => _enabled;
 
@@ -49,4 +52,6 @@ class PubspecConfig {
   int? get lineLength => _lineLength;
 
   bool? get generateSystemCollections => _generateSystemCollections;
+
+  bool? get generateExpand => _generateExpand;
 }

@@ -17,6 +17,7 @@ const _defaultPbSchemaPath = 'pb_schema.json';
 const _defaultOutputDir = 'lib/generated/pocketbase';
 const _defaultLineLength = 80;
 const _defaultGenerateSystemCollections = false;
+const _defaultGenerateExpand = false;
 
 /// The generator of models files.
 class Generator {
@@ -41,11 +42,14 @@ class Generator {
     _lineLength = pubspecConfig.lineLength ?? _defaultLineLength;
 
     _generateSystemCollections = pubspecConfig.generateSystemCollections ?? _defaultGenerateSystemCollections;
+
+    _generateExpand = pubspecConfig.generateExpand ?? _defaultGenerateExpand;
   }
   late String _pbSchemaPath;
   late String _outputDir;
   late int _lineLength;
   late bool _generateSystemCollections;
+  late bool _generateExpand;
 
   /// Generates collections models files.
   Future<void> generateAsync() async {
@@ -87,6 +91,7 @@ class Generator {
       }
 
       final collectionModel = Collection.fromJson(collectionJson);
+      if (_generateExpand) collectionModel.withExpand();
       if (_generateSystemCollections || !collectionModel.system) {
         collections.add(collectionModel);
       }
