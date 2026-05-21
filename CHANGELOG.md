@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7
+
+* Add support for view collections
+
 ## 0.1.6
 
 * Bump min dart sdk version to 3.8.0
