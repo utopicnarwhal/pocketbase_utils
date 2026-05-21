@@ -25,12 +25,16 @@ class PubspecConfig {
     }
 
     _enabled = pocketbaseUtilsConfig['enabled'] is bool ? pocketbaseUtilsConfig['enabled'] as bool : null;
-    _pbSchemaPath =
-        pocketbaseUtilsConfig['pb_schema_path'] is String ? pocketbaseUtilsConfig['pb_schema_path'] as String : null;
+    _pbSchemaPath = pocketbaseUtilsConfig['pb_schema_path'] is String
+        ? pocketbaseUtilsConfig['pb_schema_path'] as String
+        : null;
     _outputDir = pocketbaseUtilsConfig['output_dir'] is String ? pocketbaseUtilsConfig['output_dir'] as String : null;
     _lineLength = pocketbaseUtilsConfig['line_length'] is int ? pocketbaseUtilsConfig['line_length'] as int : null;
     _generateSystemCollections = pocketbaseUtilsConfig['generate_system_collections'] is bool
         ? pocketbaseUtilsConfig['generate_system_collections'] as bool
+        : null;
+    _generateViewCollections = pocketbaseUtilsConfig['generate_view_collections'] is bool
+        ? pocketbaseUtilsConfig['generate_view_collections'] as bool
         : null;
   }
 
@@ -39,6 +43,7 @@ class PubspecConfig {
   String? _outputDir;
   int? _lineLength;
   bool? _generateSystemCollections;
+  bool? _generateViewCollections;
 
   bool? get enabled => _enabled;
 
@@ -49,4 +54,6 @@ class PubspecConfig {
   int? get lineLength => _lineLength;
 
   bool? get generateSystemCollections => _generateSystemCollections;
+
+  bool? get generateViewCollections => _generateViewCollections;
 }

@@ -49,6 +49,7 @@ pocketbase_utils:
   output_dir: lib/generated/pocketbase # Optional. Sets the directory of generated model files. If the directory doesn't exist — it'll be created. Default: lib/generated/pocketbase
   line_length: 80 # Optional. Sets the length of line for dart formatter of generated code. Default: 80
   generate_system_collections: false # Optional. Generate models for the system level collections like `_mfas`, `_otps`, and `_superusers`. Default: false
+  generate_view_collections: false # Optional. Generate models for the view type collections. Default: false
 ```
 
 ### 4. Run the generator

@@ -9,6 +9,7 @@ import 'package:pocketbase_utils/src/templates/base_record.dart';
 import 'package:pocketbase_utils/src/templates/date_time_json_methods.dart';
 import 'package:pocketbase_utils/src/templates/empty_values.dart';
 import 'package:pocketbase_utils/src/templates/geo_point_class.dart';
+import 'package:pocketbase_utils/src/templates/view_record.dart';
 import 'package:pocketbase_utils/src/utils/file_utils.dart';
 import 'package:pocketbase_utils/src/utils/utils.dart';
 import 'package:recase/recase.dart';
@@ -17,6 +18,7 @@ const _defaultPbSchemaPath = 'pb_schema.json';
 const _defaultOutputDir = 'lib/generated/pocketbase';
 const _defaultLineLength = 80;
 const _defaultGenerateSystemCollections = false;
+const _defaultGenerateViewCollections = false;
 
 /// The generator of models files.
 class Generator {
@@ -41,11 +43,13 @@ class Generator {
     _lineLength = pubspecConfig.lineLength ?? _defaultLineLength;
 
     _generateSystemCollections = pubspecConfig.generateSystemCollections ?? _defaultGenerateSystemCollections;
+    _generateViewCollections = pubspecConfig.generateViewCollections ?? _defaultGenerateViewCollections;
   }
   late String _pbSchemaPath;
   late String _outputDir;
   late int _lineLength;
   late bool _generateSystemCollections;
+  late bool _generateViewCollections;
 
   /// Generates collections models files.
   Future<void> generateAsync() async {
@@ -73,6 +77,10 @@ class Generator {
     return Directory(outputDirPath).create(recursive: true);
   }
 
+  bool _isCollectionEnabled(Collection collection) =>
+      (_generateSystemCollections || !collection.system) &&
+      (_generateViewCollections || collection.type != CollectionType.view);
+
   Future<void> _generateDartFiles(File pbSchemaFile, Directory outputDirectory) async {
     final pbSchemaFileContent = pbSchemaFile.readAsStringSync();
     final pbSchemaDecoded = jsonDecode(pbSchemaFileContent);
@@ -87,7 +95,7 @@ class Generator {
       }
 
       final collectionModel = Collection.fromJson(collectionJson);
-      if (_generateSystemCollections || !collectionModel.system) {
+      if (_isCollectionEnabled(collectionModel)) {
         collections.add(collectionModel);
       }
     }
@@ -99,6 +107,10 @@ class Generator {
     createFileAndWrite(
       path.join(outputDirectory.path, 'auth_record.dart'),
       authRecordClassGenerator(_lineLength),
+    );
+    createFileAndWrite(
+      path.join(outputDirectory.path, 'view_record.dart'),
+      viewRecordClassGenerator(_lineLength),
     );
     createFileAndWrite(
       path.join(outputDirectory.path, 'empty_values.dart'),

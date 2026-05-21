@@ -148,6 +148,24 @@ final class Field {
     });
   }
 
+  /// Creates a field with dynamic type for view collections.
+  /// All fields in view collections should be dynamic since they can contain
+  /// aggregated data from multiple collections with different types.
+  code_builder.Field toCodeBuilderForView(String className, {bool shouldOverride = false}) {
+    return code_builder.Field((f) {
+      final jsonAnnotation = _jsonAnnotation(className);
+
+      f
+        ..name = nameInCamelCase
+        ..modifier = code_builder.FieldModifier.final$
+        ..type = fieldTypeRef(className)
+        ..annotations.addAll([
+          if (jsonAnnotation != null) jsonAnnotation,
+          if (shouldOverride) code_builder.refer('override'),
+        ]);
+    });
+  }
+
   List<code_builder.Field> additionalFieldOptionsAsFields() {
     return [
       if (min != null)
